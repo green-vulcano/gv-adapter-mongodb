@@ -52,6 +52,8 @@ public class Activator implements BundleActivator {
 
 		// register the operations associated to the MongoDB connector
 
+		MongoDBChannel.setup();
+		
 		OperationFactory.registerSupplier("mongodb-query-call", MongoDBQueryCallOperation::new);
 
 		// OperationFactory.registerSupplier("mongodb-metadata-call", MongoDBMetadataCallOperation::new);
@@ -65,6 +67,8 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 
+		MongoDBChannel.shutdown();
+		
 		// unregister the configuration listener to watch for changes to the GV ESB systems configuration file
 
 		XMLConfig.removeConfigurationListener(configurationListener);
