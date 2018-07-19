@@ -41,9 +41,17 @@ public class Activator implements BundleActivator {
 		log.debug("GV ESB MongoDB plugin module - handling configuration event");
 
 		// if the GV ESB configuration file gets deleted, then shutdown the opened channel with the MongoDB database
-		if (event.getCode() == ConfigurationEvent.EVT_FILE_REMOVED && event.getFile().equals(GreenVulcanoConfig.getSystemsConfigFileName()))
+		if (event.getCode() == ConfigurationEvent.EVT_FILE_REMOVED && event.getFile().equals(GreenVulcanoConfig.getSystemsConfigFileName())) {
 
 			MongoDBChannel.shutdown();
+
+		}
+
+		else if (event.getCode() == ConfigurationEvent.EVT_FILE_LOADED && event.getFile().equals(GreenVulcanoConfig.getSystemsConfigFileName())) {
+
+			MongoDBChannel.setup();
+
+		}
 
 	};
 
