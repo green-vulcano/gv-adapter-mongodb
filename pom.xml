@@ -4,19 +4,20 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.greenvulcano.gvesb.adapter</groupId>
-    <artifactId>gv-adapter-mongo</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
-    <modules>
-        <module>gvvcl-mongo</module>
-    </modules>
-    <packaging>pom</packaging>
-    <name>GreenVulcano ESB adapter plugin</name>
+
+    <artifactId>gvvcl-mongo</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+
+    <name>GreenVulcano ESB VCL interface for MongoDB</name>
+
     <properties>
         <osgi.version>5.0.0</osgi.version>
-        <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
         <gvesb.version>4.0.0-SNAPSHOT</gvesb.version>
+        <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
         <maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
     </properties>
+
     <repositories>
         <repository>
             <id>gv</id>
@@ -90,16 +91,22 @@
             <version>1.6.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>
             <resource>
-                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
@@ -108,6 +115,7 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -130,10 +138,11 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Export-Package/>
                         <Import-Package>*</Import-Package>
-                        <Bundle-Activator>it.greenvulcano.esb.virtual.mongodb.Activator</Bundle-Activator>
+                        <Bundle-Activator>it.greenvulcano.gvesb.channel.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
