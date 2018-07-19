@@ -3,12 +3,12 @@ package it.greenvulcano.gvesb.operation;
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.buffer.GVBuffer;
 import it.greenvulcano.gvesb.channel.MongoDBChannel;
+import it.greenvulcano.gvesb.channel.service.MongoDBService;
 import it.greenvulcano.gvesb.virtual.*;
 import it.greenvulcano.util.metadata.PropertiesHandler;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
-import javax.mail.Session;
 import java.util.Objects;
 
 public class MongoDBQueryCallOperation implements CallOperation {
@@ -22,6 +22,10 @@ public class MongoDBQueryCallOperation implements CallOperation {
     private Integer portNumber;
 
     private String databaseName;
+
+    private String collectionName;
+
+    private String query;
 
 
 
@@ -37,6 +41,10 @@ public class MongoDBQueryCallOperation implements CallOperation {
             portNumber = Integer.valueOf(XMLConfig.get(node, "@portNumber"));
 
             databaseName = XMLConfig.get(node, "@databaseName");
+
+            collectionName = XMLConfig.get(node, "@collectionName");
+
+            query = XMLConfig.get(node, "@query");
 
             logger.debug("Initialization completed");
 
@@ -54,25 +62,31 @@ public class MongoDBQueryCallOperation implements CallOperation {
 
         try {
 
-            String jndiname = PropertiesHandler.expand(this.endpoint, gvBuffer);
-            String keyspace = PropertiesHandler.expand(this.keyspace, gvBuffer);
+            logger.info("GVBuffer: " + gvBuffer.toString());
 
-            Session session = Objects.requireNonNull(MongoDBChannel.getMongoDBService(jndiname, keyspace), "Active session not found");
+            String statement = PropertiesHandler.expand(query, gvBuffer);
 
-            String query = PropertiesHandler.expand(statement, gvBuffer);
+            MongoDBService mongo = Objects.requireNonNull(MongoDBChannel.getMongoDBService(hostname, portNumber, databaseName), "No connection to MongoDB found");
 
-            logger.debug("Executing statement " + query);
+            logger.debug("Executing statement: " + statement);
 
-            ResultSet queryResult = session.execute(query);
-            gvBuffer.setObject(mapper.map(queryResult));
+            String result = mongo.findToJSON(null, collectionName, statement);
+
+            gvBuffer.setObject(result);
+
+            logger.info("Query executed successfully");
 
         } catch (Exception exc) {
+
             throw new CallException("GV_CALL_SERVICE_ERROR",
                     new String[][] { { "service", gvBuffer.getService() }, { "system", gvBuffer.getSystem() },
                             { "tid", gvBuffer.getId().toString() }, { "message", exc.getMessage() } },
                     exc);
+
         }
+
         return gvBuffer;
+
     }
 
     @Override
