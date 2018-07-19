@@ -3,6 +3,7 @@ package it.greenvulcano.gvesb.channel;
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.configuration.XMLConfigException;
 import it.greenvulcano.gvesb.core.config.GreenVulcanoConfig;
+import it.greenvulcano.util.metadata.PropertiesHandler;
 import it.greenvulcano.util.xml.XMLUtils;
 import it.greenvulcano.util.xpath.XPathFinder;
 
@@ -59,8 +60,9 @@ public class MongoDBChannel {
 	
     private static void buildMongoClient(Node mongoChannelNode) {
     	try {
-    		
-    		String uri = XMLUtils.get_S(mongoChannelNode, "@endpoint");    		
+
+    		String uri = PropertiesHandler.expand(XMLUtils.get_S(mongoChannelNode, "@endpoint"));
+
     		MongoClientURI mongoClientURI = new MongoClientURI(uri);
     		
     		mongoClients.put(XPathFinder.buildXPath(mongoChannelNode), new MongoClient(mongoClientURI));
