@@ -121,7 +121,7 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Export-Package/>
                         <Import-Package>*</Import-Package>
-                        <Bundle-Activator>Activator</Bundle-Activator>
+                        <Bundle-Activator>it.greenvulcano.gvesb.channel.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
