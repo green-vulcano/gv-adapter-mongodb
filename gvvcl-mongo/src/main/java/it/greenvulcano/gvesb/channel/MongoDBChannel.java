@@ -1,74 +1,85 @@
 package it.greenvulcano.gvesb.channel;
 
-import it.greenvulcano.gvesb.channel.service.MongoDBService;
-import it.greenvulcano.gvesb.j2ee.JNDIHelper;
+import it.greenvulcano.configuration.XMLConfig;
+import it.greenvulcano.configuration.XMLConfigException;
+import it.greenvulcano.gvesb.core.config.GreenVulcanoConfig;
+import it.greenvulcano.util.xml.XMLUtils;
+import it.greenvulcano.util.xpath.XPathFinder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 public class MongoDBChannel {
 	
-	private static Map<String, MongoDBService> mongoDBServices = new HashMap<>();
-
-	// private final static JNDIHelper jndiContext = new JNDIHelper();
-
-
+	private final static Logger LOG = LoggerFactory.getLogger(MongoDBChannel.class);
+	private final static Map<String, MongoClient> mongoClients = new HashMap<>();
+		
+	static void setup() {
+		
+		try {
+		
+			NodeList mongoChannelList = XMLConfig.getNodeList(GreenVulcanoConfig.getSystemsConfigFileName(),"//Channel[@type='MongoDBAdapter' and @enabled='true']");
+			
+			LOG.debug("Enabled MongoDBAdapter channels found: "+mongoChannelList.getLength());
+			IntStream.range(0, mongoChannelList.getLength())
+	        		 .mapToObj(mongoChannelList::item)		         
+	        		 .forEach(MongoDBChannel::buildMongoClient);
+		
+		} catch (XMLConfigException e) {
+			LOG.error("Error reading configuration", e);
+		}
+	}
 
 	static void shutdown() {
 
-		for (MongoDBService service : mongoDBServices.values())
-
-			service.close();
-
-	}
-
-	public static MongoDBService getMongoDBService(String hostname, Integer portNumber, String databaseName) {
-
-		// first, check the parameters
-		if (hostname == null || portNumber == null || databaseName == null)
-
-			throw new IllegalArgumentException("Null-reference mandatory parameters");
-
-		// compose the key corresponding to the MongoDB session client to return to the caller
-		String key = hostname + "~" + portNumber + "~" + databaseName;
-
-		// lookup the MongoDB client matching the search parameters
-		MongoDBService service = mongoDBServices.get(key);
-
-		// if found, then return it
-		if (service != null) return service;
-
-
-
-		// otherwise, initialize it
-		service = new MongoDBService(hostname, portNumber, databaseName);
-
-		// insert the key-value matching the new MongoDB session client into the map
-		mongoDBServices.put(key, service);
-
-		// return the generated client
-		return service;
-
-		/*String sessionKey =  Optional.ofNullable(keyspace).orElse("default")+"@"+connectorJndiName;
-
-		if (!cassandraSessions.containsKey(sessionKey)) {
+		for (Entry<String, MongoClient> client : mongoClients.entrySet()) {
+			
 			try {
-
-				CassandraConnector cassandraConnector = (CassandraConnector) jndiContext.lookup(connectorJndiName);
-
-				Session session = Optional.ofNullable(keyspace).map(cassandraConnector::getSession).orElseGet(cassandraConnector::getSession);
-				cassandraSessions.putIfAbsent(sessionKey, session);
-
-
-			} catch (NamingException e) {
-				LOG.error("Error retrieving CassandraConnector instance", e);
+				client.getValue().close();
 			} catch (Exception e) {
-				LOG.error("Error building Cassandra session instance", e);
+				LOG.error("Error closing client for Channel " + client.getKey(), e);
 			}
 		}
-
-		return cassandraSessions.get(sessionKey);*/
-
+		
+		mongoClients.clear();
+		
 	}
+	
+	
+    private static void buildMongoClient(Node mongoChannelNode) {
+    	try {
+    		
+    		String uri = XMLUtils.get_S(mongoChannelNode, "@endpoint");    		
+    		MongoClientURI mongoClientURI = new MongoClientURI(uri);
+    		
+    		mongoClients.put(XPathFinder.buildXPath(mongoChannelNode), new MongoClient(mongoClientURI));
+    		
+    	} catch (Exception e) {
+    		 LOG.error("Error configuring MongoClient", e);
+		}
+    	
+    }
+    
+    public static Optional<MongoClient> getMongoClient(Node callOperationNode) {
+    	
+    	String xpath = XPathFinder.buildXPath(callOperationNode.getParentNode());
+    	
+    	return Optional.ofNullable(mongoClients.get(xpath));
+    	
+    }
+	
+
+	
 
 }
