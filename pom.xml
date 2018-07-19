@@ -7,9 +7,7 @@
     <artifactId>gv-adapter-mongo</artifactId>
     <version>4.0.0-SNAPSHOT</version>
     <modules>
-        <module>gv-mongo-adapter</module>
         <module>gvvcl-mongo</module>
-        <module>gv-mongo-connector</module>
     </modules>
     <packaging>pom</packaging>
     <name>GreenVulcano ESB adapter plugin</name>
