@@ -3,7 +3,6 @@ package it.greenvulcano.gvesb.operation;
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.buffer.GVBuffer;
 import it.greenvulcano.gvesb.channel.MongoDBChannel;
-import it.greenvulcano.gvesb.channel.service.MongoDBService;
 import it.greenvulcano.gvesb.virtual.*;
 import it.greenvulcano.util.metadata.PropertiesHandler;
 
@@ -13,12 +12,8 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
-<<<<<<< HEAD
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCursor;
-=======
-import java.util.Objects;
->>>>>>> 5ce3e77aefc7a7c7d070747202b842fb135ae77b
 
 public class MongoDBQueryCallOperation implements CallOperation {
 
@@ -26,25 +21,11 @@ public class MongoDBQueryCallOperation implements CallOperation {
 
     private OperationKey key = null;
 
-<<<<<<< HEAD
     private String name;
     
     private String database;
     private String collection;
     private String query;
-=======
-    private String hostname;
-
-    private Integer portNumber;
-
-    private String databaseName;
-
-    private String collectionName;
-
-    private String query;
-
-
->>>>>>> 5ce3e77aefc7a7c7d070747202b842fb135ae77b
 
     
     private MongoClient mongoClient;
@@ -66,10 +47,6 @@ public class MongoDBQueryCallOperation implements CallOperation {
 
         	query = XMLConfig.get(node, "./query[text()]");       
 
-            collectionName = XMLConfig.get(node, "@collectionName");
-
-            query = XMLConfig.get(node, "@query");
-
             logger.debug("Initialization completed");
 
         } catch (Exception e) {
@@ -85,7 +62,6 @@ public class MongoDBQueryCallOperation implements CallOperation {
     public GVBuffer perform(GVBuffer gvBuffer) throws ConnectionException, CallException, InvalidDataException {
 
         try {
-<<<<<<< HEAD
         	
         	String actualDatabase = PropertiesHandler.expand(database, gvBuffer);
         	String actualCollection = PropertiesHandler.expand(collection, gvBuffer);
@@ -115,34 +91,14 @@ public class MongoDBQueryCallOperation implements CallOperation {
 
 
             gvBuffer.setObject(jsonResult);
-=======
-
-            logger.info("GVBuffer: " + gvBuffer.toString());
-
-            String statement = PropertiesHandler.expand(query, gvBuffer);
-
-            MongoDBService mongo = Objects.requireNonNull(MongoDBChannel.getMongoDBService(hostname, portNumber, databaseName), "No connection to MongoDB found");
-
-            logger.debug("Executing statement: " + statement);
-
-            String result = mongo.findToJSON(null, collectionName, statement);
-
-            gvBuffer.setObject(result);
-
-            logger.info("Query executed successfully");
->>>>>>> 5ce3e77aefc7a7c7d070747202b842fb135ae77b
 
         } catch (Exception exc) {
-
             throw new CallException("GV_CALL_SERVICE_ERROR",
                     new String[][] { { "service", gvBuffer.getService() }, { "system", gvBuffer.getSystem() },
                             { "tid", gvBuffer.getId().toString() }, { "message", exc.getMessage() } },
                     exc);
-
         }
-
         return gvBuffer;
-
     }
 
     @Override
