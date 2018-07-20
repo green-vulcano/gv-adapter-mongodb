@@ -1,0 +1,7 @@
+<!ELEMENT mongodb-list-collections-call ANY>
+
+<!ATTLIST mongodb-list-collections-call type CDATA #FIXED "call">
+
+<!ATTLIST mongodb-list-collections-call name CDATA #REQUIRED>
+
+<!ATTLIST mongodb-list-collections-call database CDATA #REQUIRED>

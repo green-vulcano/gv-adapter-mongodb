@@ -1,0 +1,11 @@
+<!ELEMENT mongodb-query-call (query)>
+
+<!ATTLIST mongodb-query-call type CDATA #FIXED "call">
+
+<!ATTLIST mongodb-query-call name CDATA #REQUIRED>
+
+<!ATTLIST mongodb-query-call database CDATA #REQUIRED>
+
+<!ATTLIST mongodb-query-call collection CDATA #REQUIRED>
+
+<!ELEMENT query (#PCDATA)>

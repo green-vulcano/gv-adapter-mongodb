@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+
+<!--<!DOCTYPE mongodb-list-collections-call SYSTEM "mongodb-collections-list.dtd">-->
+<!DOCTYPE mongodb-query-call SYSTEM "mongodb-query.dtd">
+
+<!--<mongodb-list-collections-call type="call" name="list-collections" database="xmlp{{db_name}}">
+</mongodb-list-collections-call>-->
+<mongodb-query-call type="call" name="query" database="xmlp{{db_name}}" collection="json{{collection}}">
+	<query><![CDATA[json{{query}}]]></query>
+</mongodb-query-call>
