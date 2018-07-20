@@ -1,12 +1,12 @@
-package it.greenvulcano.gvesb.channel.util;
-
-import it.greenvulcano.gvesb.channel.exception.PropertyInitializationException;
-import it.greenvulcano.gvesb.channel.exception.PropertyNotFoundException;
+package it.greenvulcano.gvesb.channel.mongodb.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import it.greenvulcano.gvesb.channel.mongodb.exception.PropertyInitializationException;
+import it.greenvulcano.gvesb.channel.mongodb.exception.PropertyNotFoundException;
 
 public class Properties {
 

@@ -1,4 +1,4 @@
-package it.greenvulcano.gvesb.channel;
+package it.greenvulcano.gvesb.channel.mongodb;
 
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.configuration.XMLConfigException;
