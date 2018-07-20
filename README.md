@@ -2,6 +2,18 @@
 
 This is the implementation of a GreenVulcano VCL adapter for the MongoDB database engine. It is meant to be runned as an Apache Karaf bundle.
 
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [GreenVulcano VCL Adapter for MongoDB](#greenvulcano-vcl-adapter-for-mongodb)
+	- [Getting started](#getting-started)
+		- [Prerequisites](#prerequisites)
+		- [Installing the VCL adapter bundle in Apache Karaf](#installing-the-vcl-adapter-bundle-in-apache-karaf)
+	- [Using the VCL adapter in your GreenVulcano project](#using-the-vcl-adapter-in-your-greenvulcano-project)
+		- [Declaring the System-Channel-Operation for the MongoDB database](#declaring-the-system-channel-operation-for-the-mongodb-database)
+		- [Sample usage](#sample-usage)
+
+<!-- /TOC -->
+
 ## Getting started
 
 ### Prerequisites
