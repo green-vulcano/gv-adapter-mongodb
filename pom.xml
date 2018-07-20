@@ -6,7 +6,7 @@
     <groupId>it.greenvulcano.gvesb.adapter</groupId>
 
     <artifactId>gvvcl-mongo</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>GreenVulcano ESB VCL interface for MongoDB</name>
