@@ -1,4 +1,4 @@
-package it.greenvulcano.gvesb.channel.service;
+package it.greenvulcano.gvesb.channel.mongodb.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -10,9 +10,11 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
-import it.greenvulcano.gvesb.channel.exception.QueryFailedException;
-import it.greenvulcano.gvesb.channel.util.DocumentSerializer;
-import it.greenvulcano.gvesb.channel.util.Properties;
+
+import it.greenvulcano.gvesb.channel.mongodb.exception.QueryFailedException;
+import it.greenvulcano.gvesb.channel.mongodb.util.DocumentSerializer;
+import it.greenvulcano.gvesb.channel.mongodb.util.Properties;
+
 import org.bson.Document;
 
 import java.util.LinkedList;
@@ -163,7 +165,7 @@ public class MongoDBService {
 
     }
 
-    public MongoCollection getCollection(String database, String collectionName) throws IllegalArgumentException, MongoCommandException {
+    public MongoCollection<Document> getCollection(String database, String collectionName) throws IllegalArgumentException, MongoCommandException {
 
         // if the database parameter is specified, then access the database with the specified name
         MongoDatabase db = useDatabase(database);
@@ -226,10 +228,8 @@ public class MongoDBService {
             throw new IllegalArgumentException("Undefined database name");
 
         // retrieve the collection with the specified name from the database
-        MongoCollection collection = db.getCollection(collectionName);
-
         // create the document in the retrieved collection (even if it does not exist)
-        collection.insertOne(document);
+        db.getCollection(collectionName).insertOne(document);
 
     }
 
@@ -263,7 +263,7 @@ public class MongoDBService {
     public FindIterable<Document> find(String database, String collection, String query) throws Exception {
 
         // retrieve the collection with the specified name from the specified database
-        MongoCollection dbCollection = getCollection(database, collection);
+        MongoCollection<Document> dbCollection = getCollection(database, collection);
 
         // prepare the parsed query from the query string
         BasicDBObject parsedQuery = null;

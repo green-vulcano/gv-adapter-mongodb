@@ -1,4 +1,4 @@
-package it.greenvulcano.gvesb.channel.util;
+package it.greenvulcano.gvesb.channel.mongodb.util;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;

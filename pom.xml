@@ -6,20 +6,21 @@
     <groupId>it.greenvulcano.gvesb.adapter</groupId>
 
     <artifactId>gvvcl-mongo</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>GreenVulcano ESB VCL interface for MongoDB</name>
 
-    <properties>
-        <osgi.version>5.0.0</osgi.version>
-        <gvesb.version>4.0.0-SNAPSHOT</gvesb.version>
-        <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
-        <maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
-    </properties>
-
-    <repositories>
-        <repository>
+   	<properties>
+		<osgi.version>5.0.0</osgi.version>
+		<gvesb.version>4.0.0-SNAPSHOT</gvesb.version>
+		<maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
+		<maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
+		<cloud.nexus.content>http://mvn.greenvulcano.com/nexus/content</cloud.nexus.content>		
+	</properties>
+	
+	<repositories>
+	    <repository>
             <id>gv</id>
             <url>http://mvn.greenvulcano.com/nexus/content/groups/public</url>
             <name>GreenVulcano</name>
@@ -27,7 +28,32 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+	    <repository>
+	      <id>nexus-cloud</id>
+	      <name>Cloud Nexus instance - PUBLIC</name>
+	      <url>${cloud.nexus.content}/groups/public</url>
+	      <releases>
+	        <enabled>true</enabled>
+	      </releases>
+	      <snapshots>
+	        <enabled>true</enabled>
+	      </snapshots>
+	    </repository>
     </repositories>
+    
+    <distributionManagement>
+	    <repository>
+	      <id>nexus-cloud</id>
+	      <name>Cloud Nexus instance - RELEASES </name>
+	      <url>${cloud.nexus.content}/repositories/releases</url>
+	    </repository>
+	    <snapshotRepository>
+	      <id>nexus-cloud</id>
+	      <name>Cloud Nexus instance - SNAPSHOTS</name>
+	      <url>${cloud.nexus.content}/repositories/snapshots</url>
+	    </snapshotRepository>
+	</distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -138,7 +164,7 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Export-Package/>
                         <Import-Package>*</Import-Package>
-                        <Bundle-Activator>it.greenvulcano.gvesb.channel.Activator</Bundle-Activator>
+                        <Bundle-Activator>it.greenvulcano.gvesb.channel.mongodb.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>

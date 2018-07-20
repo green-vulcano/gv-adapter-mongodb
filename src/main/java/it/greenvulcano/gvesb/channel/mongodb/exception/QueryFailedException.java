@@ -1,8 +1,13 @@
-package it.greenvulcano.gvesb.channel.exception;
+package it.greenvulcano.gvesb.channel.mongodb.exception;
 
 public class QueryFailedException extends Exception {
 
-    public QueryFailedException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8753999589907305835L;
+
+	public QueryFailedException() {
 
         super("Query to MongoDB failed");
 

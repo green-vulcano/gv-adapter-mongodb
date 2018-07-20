@@ -1,9 +1,14 @@
 
-package it.greenvulcano.gvesb.channel.exception;
+package it.greenvulcano.gvesb.channel.mongodb.exception;
 
 public class PropertyNotFoundException extends Exception {
 
-    public PropertyNotFoundException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4041513500012144434L;
+
+	public PropertyNotFoundException() {
 
         super("Property not found in property file(s)");
 

@@ -17,15 +17,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with GreenVulcano ESB. If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package it.greenvulcano.gvesb.channel;
+package it.greenvulcano.gvesb.channel.mongodb;
 
 import it.greenvulcano.configuration.ConfigurationEvent;
 import it.greenvulcano.configuration.ConfigurationListener;
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.core.config.GreenVulcanoConfig;
-import it.greenvulcano.gvesb.operation.MongoDBListCollectionsCallOperation;
-import it.greenvulcano.gvesb.operation.MongoDBQueryCallOperation;
 import it.greenvulcano.gvesb.virtual.OperationFactory;
+import it.greenvulcano.gvesb.virtual.mongodb.MongoDBListCollectionsCallOperation;
+import it.greenvulcano.gvesb.virtual.mongodb.MongoDBQueryCallOperation;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
