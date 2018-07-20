@@ -23,11 +23,11 @@ import it.greenvulcano.configuration.ConfigurationEvent;
 import it.greenvulcano.configuration.ConfigurationListener;
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.core.config.GreenVulcanoConfig;
+import it.greenvulcano.gvesb.operation.MongoDBListCollectionsCallOperation;
 import it.greenvulcano.gvesb.operation.MongoDBQueryCallOperation;
+import it.greenvulcano.gvesb.virtual.OperationFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-import it.greenvulcano.gvesb.virtual.OperationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class Activator implements BundleActivator {
 		
 		OperationFactory.registerSupplier("mongodb-query-call", MongoDBQueryCallOperation::new);
 
-		// OperationFactory.registerSupplier("mongodb-metadata-call", MongoDBMetadataCallOperation::new);
+		OperationFactory.registerSupplier("mongodb-list-collections-call", MongoDBListCollectionsCallOperation::new);
 
 		// register a configuration listener to watch for changes to the GV ESB systems configuration file
 
@@ -85,7 +85,7 @@ public class Activator implements BundleActivator {
 
 		OperationFactory.unregisterSupplier("mongodb-query-call");
 
-		// OperationFactory.unregisterSupplier("mongo-metadata-call");
+		OperationFactory.unregisterSupplier("mongodb-list-collections-call");
 
 	}
 
