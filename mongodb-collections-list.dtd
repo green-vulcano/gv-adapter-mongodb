@@ -1,4 +1,4 @@
-<!ELEMENT mongodb-list-collections-call ANY>
+<!ELEMENT mongodb-list-collections-call EMPTY>
 
 <!ATTLIST mongodb-list-collections-call type CDATA #FIXED "call">
 
