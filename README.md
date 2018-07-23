@@ -1,6 +1,18 @@
-# GreenVulcano Adapter for MongoDB
+# GreenVulcano VCL Adapter for MongoDB
 
-This is the implementation of a GreenVulcano VCL adapter for the MongoDB database. It runs as an Apache Karaf bundle.
+This is the implementation of a GreenVulcano VCL adapter for the MongoDB database engine. It is meant to be runned as an Apache Karaf bundle.
+
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [GreenVulcano VCL Adapter for MongoDB](#greenvulcano-vcl-adapter-for-mongodb)
+	- [Getting started](#getting-started)
+		- [Prerequisites](#prerequisites)
+		- [Installing the VCL adapter bundle in Apache Karaf](#installing-the-vcl-adapter-bundle-in-apache-karaf)
+	- [Using the VCL adapter in your GreenVulcano project](#using-the-vcl-adapter-in-your-greenvulcano-project)
+		- [Declaring the System-Channel-Operation for the MongoDB database](#declaring-the-system-channel-operation-for-the-mongodb-database)
+		- [Sample usage](#sample-usage)
+
+<!-- /TOC -->
 
 ## Getting started
 
@@ -50,9 +62,9 @@ mvn install
 
 In case of success, the ```mvn install``` command will install the VCL adapter bundle in the local Maven repository folder.  
 After this operation, you have to add the Maven repository project as an Apache Karaf bundle, telling Karaf to load it after the GreenVulcano core bundles, since the VCL adapter requires the GreenVulcano bundles in order to start correctly.  
-This constraint can be enforced by properly configuring the *levels* of the Karaf bundles: the lower the level number, the earlier the bundle will be loaded by Karaf.
+This constraint can be enforced by properly configuring the *level* of the Karaf bundle: the lower the level number, the earlier the bundle will be loaded by Karaf.
 
-For the VCL adapter bundler, we will use a bundle level higher than the GreenVulcano core bundles (i.e. ```80```). The following command will install the VCL adapter bundle and set its level to ```96``` by convention, using the ```-l``` attribute:
+For the VCL adapter bundle, we will use a bundle level higher than the GreenVulcano core bundles (i.e. ```80```). The following command will install the VCL adapter bundle and set its level to ```96``` by convention, using the ```-l``` attribute:
 
 ```shell
 karaf@root()> bundle:install -l 96 mvn:it.greenvulcano.gvesb.adapter/gvvcl-mongo/1.0.0-SNAPSHOT
@@ -60,7 +72,8 @@ karaf@root()> bundle:install -l 96 mvn:it.greenvulcano.gvesb.adapter/gvvcl-mongo
 Bundle ID: x
 ```
 
-Make sure that the bundle ```GreenVulcano ESB VCL interface for MongoDB``` appears in the ```list``` of installed bundles in ```Installed``` status and with bundle level (```Lvl```) equal to ```96``` (or at least higher than ```80```). Then, use its ID to put the bundle in ```Active``` status by executing the following command:
+Make sure that the bundle ```GreenVulcano ESB VCL interface for MongoDB``` appears in the ```list``` of installed bundles in ```Installed``` status and with bundle level (```Lvl```) equal to ```96``` (or at least strictly higher than ```80```).  
+Then, use its ID to put the bundle in ```Active``` status by executing the following command:
 
 ```shell
 karaf@root()> start x
@@ -70,12 +83,12 @@ list | grep GreenVulcano ESB VCL interface for MongoDB
 
 ## Using the VCL adapter in your GreenVulcano project
 
-In order to use the features of the MongoDB VCL adapter in your GreenVulcano project, you need to define a System-Channel-Operation set of nodes.  
+In order to use the features of the MongoDB VCL adapter in your GreenVulcano project, you need to define a proper System-Channel-Operation set of nodes.  
 **For the rest of the paragraph**, let's assume you want to interact with a MongoDB database called ```documents``` hosted on ```192.168.10.10``` on port ```27017```.
 
 ### Declaring the System-Channel-Operation for the MongoDB database
 
-Insert the following XML node in the ```<Systems></Systems>``` section:
+Insert the ```<mongodb-query-call>``` and ```<mongodb-list-collections-call>``` XML nodes in the ```<Systems></Systems>``` section of file ```GVCore.xml```. Here's an example:
 
 ```xml
 <System id-system="mongodb">
@@ -84,25 +97,114 @@ Insert the following XML node in the ```<Systems></Systems>``` section:
         <mongodb-query-call type="call" name="query" database="xmlp{{db_name}}" collection="json{{collection}}">
             <query><![CDATA[json{{query}}]]></query>
         </mongodb-query-call>
+        <mongodb-list-collections-call type="call" name="list-collections" database="xmlp{{db_name}">
+        </mongodb-list-collections-call>
     </Channel>
 </System>
 ```
 
+Some constraints apply to these XML nodes.
+
+- The ```<Channel>``` XML node must comply with the following syntax:
+    - ```endpoint``` must contain a URI string correctly referencing the hostname and the port of an operational MongoDB server; refer to [this link](https://docs.mongodb.com/manual/reference/connection-string/) for further reference.
+- The ```<mongodb-query-call>``` XML node must comply with the following syntax:
+    - ```type``` must be declared and set equal to ```"call"```;
+    - ```name``` must be declared: it defines the name of the Operation node;
+    - ```database``` must be declared: it defines the name of the MongoDB database to query;
+    - ```collection``` must be declared: it defines the name of the MongoDB collection of the specified database to query;
+    - the ```<query>``` element must contain the query to perform against the specified database and collection; it must comply the MongoDB query syntax.
+- The ```<mongodb-list-collections-call>``` XML node must comply with the following syntax:
+    - ```type``` must be declared and set equal to ```"call"```;
+    - ```name``` must be declared: it defines the name of the Operation node;
+    - ```database``` must be declared: it defines the name of the MongoDB database to query.
+
 Use this operation in your project as needed.  
-Whenever you need to deploy a new version of the application on GreenVulcano, you have to make sure the following application properties are set (**replace their values with your database connection settings**):
+Whenever you need to deploy a new version of the application on GreenVulcano, you have to make sure the properties of the MongoDB operation nodes are set correctly.
 
+### Sample usage
+
+Let's recall the System-Channel-Operation nodes previously defined:
+
+```xml
+<System id-system="mongodb">
+    <Channel id-channel="mongodb_db1" enabled="true" endpoint="xmlp{{db_host_port}}"
+        type="MongoDBAdapter">
+        <mongodb-query-call type="call" name="query" database="xmlp{{db_name}}" collection="json{{collection}}">
+            <query><![CDATA[json{{query}}]]></query>
+        </mongodb-query-call>
+        <mongodb-list-collections-call type="call" name="list-collections" database="xmlp{{db_name}">
+        </mongodb-list-collections-call>
+    </Channel>
+</System>
 ```
-db_host_port: mongodb://192.168.10.10:27017
-db_name: documents
+In case these operations are used by any Service defined in the application, it's necessary to define the following properties in the GreenVulcano dashboard (Properties section) before running such Services:
+
+- ```db_host_port: mongodb://192.168.10.10:27017```
+- ```db_name: documents```
+
+Once the application properties are correctly set, it is possible to run the Services defined in the application deployed on GreenVulcano. In this example, the following Services are defined:
+
+```xml
+<Services>
+    <Description>This section contains a list of all services provided by
+        GreenVulcano ESB</Description>
+    <Service group-name="DEFAULT_GROUP" id-service="MONGODB" service-activation="on"
+                statistics="off">
+        <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" name="List Collections"
+                    operation-activation="on" out-check-type="none"
+                    type="operation">
+            <Flow first-node="list_coll_operation">
+                <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                    id="list_coll_operation" id-channel="mongodb_db1"
+                                    id-system="mongodb"
+                                    next-node-id="end_step" op-type="call"
+                                    operation-name="list-collections"
+                                    output="output_query" point-x="254" point-y="150"
+                                    type="flow-node"/>
+                <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                            id="end_step" op-type="end" output="output_query"
+                            point-x="510" point-y="150" type="flow-node"/>
+            </Flow>
+        </Operation>
+        <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" name="Query"
+                    operation-activation="on" out-check-type="none"
+                    type="operation">
+            <Flow first-node="query_operation">
+                <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                    id="query_operation" id-channel="mongodb_db1"
+                                    id-system="mongodb" input="input_query"
+                                    next-node-id="end_step" op-type="call"
+                                    operation-name="query"
+                                    output="output_query" point-x="254" point-y="150"
+                                    type="flow-node"/>
+                <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                            id="end_step" op-type="end" output="output_query"
+                            point-x="510" point-y="150" type="flow-node"/>
+            </Flow>
+        </Operation>
+    </Service>
+</Services>
 ```
 
-## TODO complete this section: ensure the VCL adapter consumes a JSON string
+You can test these Services selecting them in the Execute section of the GreenVulcano dashboard:
 
+- **List Collections**: no input Body is needed; after a successful execution, the output window will display the list of the collections defined in the MongoDB database referred by the application properties;
+- **Query**: a JSON representing the query to perform against the MongoDB is required; such JSON must have the following structure:
 
-## TODO show this sample query
+    ```json
+    {
+        "collection": "<the name of the collection to query - it must be inside the declared database>",
+        "query": "<the query to perform against the specified collection - it must comomply with the MongoDB query syntax>"
+    }
+    ```
+
+**N.B.**: since the MongoDB query has a JSON format, the \" symbols must be escaped (with \\ symbol) in the JSON sent to the GreenVulcano application. Example:
+
 ```json
 {
     "collection": "measures_1",
     "query": "{\"sensor.physicalId\": { $eq: \"GPS\" } }"
 }
 ```
+
+Notice the escaped \" symbols.
