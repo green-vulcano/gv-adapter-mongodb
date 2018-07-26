@@ -42,14 +42,14 @@ public class MongoDBCallOperation implements CallOperation {
         	name = XMLConfig.get(node, "@name");
         	
         	mongoClient = MongoDBChannel.getMongoClient(node)
-        			                    .orElseThrow(()-> new NoSuchElementException("MongoClient instance not foud for Operation "+name));
+        			                    .orElseThrow(()-> new NoSuchElementException("MongoClient instance not found for Operation " + name));
         	
         	database = XMLConfig.get(node, "@database");
         	collection = XMLConfig.get(node, "@collection");
 
             dbo = MongoDBOFactory.build(node);  
 
-            logger.debug("Configured DBOperetion "+dbo.getDBOperationName());           
+            logger.debug("Configured DBOperation " + dbo.getDBOperationName());
 
         } catch (Exception e) {
 
@@ -68,7 +68,7 @@ public class MongoDBCallOperation implements CallOperation {
         	String actualDatabase = PropertiesHandler.expand(database, gvBuffer);
         	String actualCollection = PropertiesHandler.expand(collection, gvBuffer);
         	        	
-        	logger.debug("Preparing MongoDB operation " + dbo.getDBOperationName() + "  on database: "+actualDatabase+" collection:" +actualCollection);
+        	logger.debug("Preparing MongoDB operation " + dbo.getDBOperationName() + "  on database: " + actualDatabase + " collection: " + actualCollection);
         	        	
         	MongoCollection<Document> mongoCollection = mongoClient.getDatabase(actualDatabase)
     															   .getCollection(actualCollection);
