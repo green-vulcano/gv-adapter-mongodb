@@ -1,0 +1,18 @@
+<!-- a single MongoDB generic operation -->
+<!ELEMENT mongodb-call (find|listCollections)>
+
+<!-- fixed parameter with value "call" -->
+<!ATTLIST mongodb-call type CDATA #FIXED "call">
+
+<!-- the name of the operation -->
+<!ATTLIST mongodb-call name CDATA #REQUIRED>
+
+<!-- the name of the MongoDB database to connect to -->
+<!ATTLIST mongodb-call database CDATA #REQUIRED>
+
+<!-- the name of the MongoDB collection to use to execute the operation -->
+<!ATTLIST mongodb-call collection CDATA #REQUIRED>
+
+<!-- the supported commands -->
+<!ELEMENT find (#PCDATA)>
+<!ELEMENT listCollections (EMPTY)>
