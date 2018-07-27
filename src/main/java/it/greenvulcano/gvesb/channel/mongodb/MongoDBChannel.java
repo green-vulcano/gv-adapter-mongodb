@@ -26,7 +26,7 @@ public class MongoDBChannel {
 	private final static Logger LOG = LoggerFactory.getLogger(MongoDBChannel.class);
 	private final static Map<String, MongoClient> mongoClients = new HashMap<>();
 		
-	static void setup() {
+	public static void setup() {
 		
 		try {
 		
@@ -42,7 +42,7 @@ public class MongoDBChannel {
 		}
 	}
 
-	static void shutdown() {
+	public static void shutdown() {
 
 		for (Entry<String, MongoClient> client : mongoClients.entrySet()) {
 			

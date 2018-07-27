@@ -4,12 +4,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
+import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.configuration.XMLConfigException;
 
 public class MongoDBOFactory {
 
+	private final static Logger LOG = LoggerFactory.getLogger(MongoDBOFactory.class);
 	static final Map<String, Function<Node, Optional<MongoDBO>>> dboSuppliers = new LinkedHashMap<>();
 	
 	static {
@@ -22,8 +27,10 @@ public class MongoDBOFactory {
 
 	public static MongoDBO build(Node callOperationNode) throws XMLConfigException {
 
-		Node dboConfigurationNode = callOperationNode.getFirstChild();		// extract the first child node to return its corresponding MongoDBO object
+		Node dboConfigurationNode = XMLConfig.getNode(callOperationNode, "./*[1]"); // extract the first child node to return its corresponding MongoDBO object
 
+		LOG.debug("Looking for DBO with name: "+dboConfigurationNode.getNodeName());
+		
 		if (dboConfigurationNode != null && dboSuppliers.containsKey(dboConfigurationNode.getNodeName())) {
 
 			Optional<MongoDBO> dbo = dboSuppliers.get(dboConfigurationNode.getNodeName()).apply(dboConfigurationNode);

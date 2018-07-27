@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE GVCore SYSTEM "http://www.greenvulcano.com/gvesb/dtds/GVCore.dtd">
+
+<GVCore version="1.0">
+
+    <GVPolicy name="POLICY_MANAGER" type="module">
+        <Roles />
+           
+        <Addresses />
+           
+        <ACLGreenVulcano class="it.greenvulcano.gvesb.policy.impl.ACLGreenVulcano"
+                         type="acl-manager">
+            <DefaultRes type="resource"/>
+        </ACLGreenVulcano>
+    </GVPolicy>
+
+    <GVAdapters version="1.0"/>
+    <GVDataProviderManager name="GVDP" type="module"/>
+    <GVDataTransformation name="GVDT" type="module">
+        <DataSourceSets>
+            <DataSourceSet name="Default"/>
+        </DataSourceSets>
+        <Transformations/>
+    </GVDataTransformation>
+    <GVXPath name="XPATH" type="module">
+        <XPath xpath-factory="it.greenvulcano.util.xpath.search.jaxen.JaxenXPathAPIFactoryImpl">
+            <Description>Extension functions and namespaces for XPath.</Description>
+            <XPathExtension class="it.greenvulcano.util.xpath.search.extension.ExternalDocumentXPathFunction"
+                            function-name="document">
+                <Description><![CDATA[Accede ad un documento esterno. Uso: gvf:document('xml file path')]]></Description>
+            </XPathExtension>
+            <XPathNamespace namespace="http://www.w3.org/2001/XMLSchema" prefix="xsd"/>
+            <XPathNamespace namespace="http://www.w3.org/2001/XMLSchema-instance"
+                            prefix="xsi"/>
+            <XPathNamespace namespace="http://www.w3.org/XML/1998/namespace" prefix="xml"/>
+        </XPath>
+    </GVXPath>
+    <GVScriptConfig name="SCRIPT" type="module">
+        <ScriptCache base-path="sp{{gv.app.home}}/scripts"/>
+        <ScriptEngines>
+            <ScriptEngine default-context="gvesb" lang="js" type="script-engine">
+                <BaseContext name="basic"/>
+                <BaseContext file="js/initscope.js" name="gvesb"/>
+            </ScriptEngine>
+        </ScriptEngines>
+    </GVScriptConfig>
+    <GVStatisticsConfig name="STATISTICS" type="module">
+      <Writers default="DUMMY_STORE">
+          <DUMMYStatisticsWriter class="it.greenvulcano.gvesb.statistics.plugin.DUMMYStatisticsWriter"
+                                 id="DUMMY_STORE" type="stat-writer"/>
+      </Writers>
+    </GVStatisticsConfig>
+    <GVBufferDump log-dump-size="-1" name="BUFFER_DUMP" type="module" />
+   
+    <GVServices name="SERVICES" type="module">
+        <Groups>
+            <Description>This section contains all the service groups.</Description>
+            <Group group-activation="on" id-group="DEFAULT_GRP"/>
+        </Groups>
+        <Services>
+            <Service group-name="DEFAULT_GRP" id-service="TEST" service-activation="on"
+                     statistics="off">
+                <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
+                           name="testCallOperation" operation-activation="on"
+                           type="operation">
+                   
+                    <Flow first-node="invokeCallOperation">
+                        
+                        <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                         id="invokeCallOperation" id-channel="TestChannel"
+                                         id-system="TestSystem" input="inGVBuffer"
+                                         next-node-id="done" op-type="call"  dump-in-out="true"
+                                         operation-name="testMongoDBCall" output="outGVBuffer"
+                                         type="flow-node"/>
+                        
+                        <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                                   id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
+                                   point-x="391" point-y="150" type="flow-node"/>
+                    </Flow>
+                </Operation>
+            </Service>
+        </Services>
+    </GVServices>
+    
+    <GVSystems name="SYSTEMS" type="module">
+        <Systems>
+            <Description>This section contains a list of all systems connected to GreenVulcano ESB</Description>
+            
+            <System id-system="TestSystem" system-activation="on">
+                
+                <Channel id-channel="TestChannel" endpoint="mongodb://localhost:27017"  type="MongoDBAdapter" enabled="true">
+                    <mongodb-call name="testMongoDBCall" database="gviot" collection="measures_1" type="call">
+                          <find><![CDATA[{"sensor.physicalId": { $eq:"BATTERY" } }]]></find>
+                    </mongodb-call >
+                </Channel>
+
+            </System>
+
+
+        </Systems>
+    </GVSystems>
+    
+</GVCore>
