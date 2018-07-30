@@ -1,34 +1,55 @@
 package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 
+import it.greenvulcano.configuration.XMLConfigException;
+import org.slf4j.Logger;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import org.w3c.dom.Node;
-
-import it.greenvulcano.configuration.XMLConfigException;
 
 public class MongoDBOFactory {
 
+	private static final Logger log = org.slf4j.LoggerFactory.getLogger(MongoDBOFactory.class);
+
 	static final Map<String, Function<Node, Optional<MongoDBO>>> dboSuppliers = new LinkedHashMap<>();
-	
+
+	// register the DBO builder methods for each DBO operation
 	static {
 
 		dboSuppliers.put(MongoDBOFind.NAME, MongoDBOFind.BUILDER);
 
-		// TODO dboSuppliers.put(MongoDBOListCollections.NAME, MongoDBOListCollections.BUILDER); // repeat for each DBO operation
+		dboSuppliers.put(MongoDBOInsert.NAME, MongoDBOInsert.BUILDER);
 
 	}
 
+
+
 	public static MongoDBO build(Node callOperationNode) throws XMLConfigException {
 
-		Node dboConfigurationNode = callOperationNode.getFirstChild();		// extract the first child node to return its corresponding MongoDBO object
+		NodeList children = callOperationNode.getChildNodes();
 
-		if (dboConfigurationNode != null && dboSuppliers.containsKey(dboConfigurationNode.getNodeName())) {
+		Node dboNode = null;
 
-			Optional<MongoDBO> dbo = dboSuppliers.get(dboConfigurationNode.getNodeName()).apply(dboConfigurationNode);
+		// pick the first child node matching a DBO operation
+		for (int i = 0; i < children.getLength(); i++) {
 
-			return dbo.orElseThrow(() -> new XMLConfigException("Configuration failed for DBO [" + dboConfigurationNode.getNodeName() + "]"));
+			Node child = children.item(i);
+
+			if (dboSuppliers.containsKey(child.getNodeName())) { dboNode = child; break; }
+
+		}
+
+		// if a DBO node was found, then build it by picking its specific builder
+		if (dboNode != null) {
+
+			String operationName = dboNode.getNodeName();
+
+			Optional<MongoDBO> dbo = dboSuppliers.get(operationName).apply(dboNode);
+
+			return dbo.orElseThrow(() -> new XMLConfigException("Configuration failed for DBO [" + operationName + "]"));
 
 		}
 
