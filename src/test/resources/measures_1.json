@@ -1,0 +1,58 @@
+[
+	{   
+    "timestamp": 1504802407924,
+    "sensor": {
+          "physicalId": "GPS",          
+          "device":{
+                  "networkId" : 1,
+                  "physicalId": "AA0011223344"                                     
+                }
+        },
+    "value" :  {"latitude":41.90738626,"longitude":12.46756892,"altitude":36,"speed":0,"accuracy":41,"bearing":0,"timestamp":"2017090718433608"}
+	},
+	{   
+    "timestamp": 1504802435624,
+    "sensor": {
+          "physicalId": "BATTERY",          
+          "device":{
+                  "networkId" : 1,
+                  "physicalId": "AA0011223344"                                     
+                }
+        },
+    "value" :  {"technology":"Li-ion","icon-small":17303120,"health":2,"max_charging_current":0,"status":3,"plugged":0,"present":true,"level":56,"scale":100,"temperature":293,"voltage":3855,"invalid_charger":0,"timestamp":"2017090718433781"}
+	},
+	{   
+    "timestamp": 1504802435624,
+    "sensor": {
+          "physicalId": "BATTERY",          
+          "device":{
+                  "networkId" : 1,
+                  "physicalId": "BB0011223344"                                     
+                }
+        },
+    "value" :  {"technology":"Li-ion","icon-small":17303120,"health":2,"max_charging_current":0,"status":3,"plugged":0,"present":true,"level":56,"scale":100,"temperature":293,"voltage":3855,"invalid_charger":0,"timestamp":"2017090718433781"}
+	},
+	{   
+    "timestamp": 1504802567124,
+    "sensor": {
+          "physicalId": "ACCELEROMETER",          
+          "device":{
+                  "networkId" : 1,
+                  "physicalId": "AA0011223344"                                     
+                }
+        },
+    "value" :  {"threshold":3.237492561340332,"timestamp":"2017090718433453"}
+	},
+	{   
+    "timestamp": 1504802622924,
+    "sensor": {
+          "physicalId": "GPS",          
+          "device":{
+                  "networkId" : 1,
+                  "physicalId": "AA0011223344"                                     
+                }
+        },
+    "value" :  {"latitude":41.905388,"longitude":12.4683248,"altitude":24,"speed":0,"accuracy":41,"bearing":0,"timestamp":"2017090718433608"}
+	}
+
+]
