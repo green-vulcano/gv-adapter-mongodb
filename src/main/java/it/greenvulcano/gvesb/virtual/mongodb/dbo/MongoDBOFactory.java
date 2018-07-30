@@ -1,59 +1,48 @@
 package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 
-import it.greenvulcano.configuration.XMLConfigException;
-import org.slf4j.Logger;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+
+import it.greenvulcano.configuration.XMLConfig;
+import it.greenvulcano.configuration.XMLConfigException;
+
 public class MongoDBOFactory {
 
-	private static final Logger log = org.slf4j.LoggerFactory.getLogger(MongoDBOFactory.class);
+	private final static Logger LOG = LoggerFactory.getLogger(MongoDBOFactory.class);
 
 	static final Map<String, Function<Node, Optional<MongoDBO>>> dboSuppliers = new LinkedHashMap<>();
-
-	// register the DBO builder methods for each DBO operation
+	
 	static {
 
 		dboSuppliers.put(MongoDBOFind.NAME, MongoDBOFind.BUILDER);
 
 		dboSuppliers.put(MongoDBOInsert.NAME, MongoDBOInsert.BUILDER);
 
+		// TODO repeat for each DBO operation
+
 	}
-
-
 
 	public static MongoDBO build(Node callOperationNode) throws XMLConfigException {
 
-		NodeList children = callOperationNode.getChildNodes();
+		Node dboConfigurationNode = XMLConfig.getNode(callOperationNode, "./*[1]"); // extract the first child node to return its corresponding MongoDBO object
+		
+		if (dboConfigurationNode != null && dboSuppliers.containsKey(dboConfigurationNode.getNodeName())) {
 
-		Node dboNode = null;
+			LOG.debug("Looking for DBO with name " + dboConfigurationNode.getNodeName());
 
-		// pick the first child node matching a DBO operation
-		for (int i = 0; i < children.getLength(); i++) {
+			Optional<MongoDBO> dbo = dboSuppliers.get(dboConfigurationNode.getNodeName()).apply(dboConfigurationNode);
 
-			Node child = children.item(i);
-
-			if (dboSuppliers.containsKey(child.getNodeName())) { dboNode = child; break; }
-
-		}
-
-		// if a DBO node was found, then build it by picking its specific builder
-		if (dboNode != null) {
-
-			String operationName = dboNode.getNodeName();
-
-			Optional<MongoDBO> dbo = dboSuppliers.get(operationName).apply(dboNode);
-
-			return dbo.orElseThrow(() -> new XMLConfigException("Configuration failed for DBO [" + operationName + "]"));
+			return dbo.orElseThrow(() -> new XMLConfigException("Configuration failed for DBO [" + dboConfigurationNode.getNodeName() + "]"));
 
 		}
 
-		throw new XMLConfigException("No valid DBO found");
+		throw new XMLConfigException("No valid DBO found for node" + (dboConfigurationNode != null ? " " + dboConfigurationNode.getNodeName() : ""));
 
 	}
 
