@@ -2,7 +2,9 @@ package it.greenvulcano.gvesb.channel.mongodb;
 
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.configuration.XMLConfigException;
+import it.greenvulcano.gvesb.channel.mongodb.service.MongoClientProvider;
 import it.greenvulcano.gvesb.core.config.GreenVulcanoConfig;
+import it.greenvulcano.gvesb.j2ee.JNDIHelper;
 import it.greenvulcano.util.metadata.PropertiesHandler;
 import it.greenvulcano.util.xml.XMLUtils;
 import it.greenvulcano.util.xpath.XPathFinder;
@@ -12,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
+import javax.naming.NamingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +29,7 @@ public class MongoDBChannel {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(MongoDBChannel.class);
 	private final static Map<String, MongoClient> mongoClients = new HashMap<>();
+	private final static JNDIHelper jndiContext = new JNDIHelper();
 		
 	public static void setup() {
 		
@@ -75,10 +80,33 @@ public class MongoDBChannel {
     
     public static Optional<MongoClient> getMongoClient(Node callOperationNode) {
     	
-    	String xpath = XPathFinder.buildXPath(callOperationNode.getParentNode());
+    	Optional<MongoClient> client = Optional.empty();
     	
-    	return Optional.ofNullable(mongoClients.get(xpath));
+    	try {
+			if (XMLConfig.exists(callOperationNode, "@client-jndi-name")) {
+				
+				String jndiName = XMLConfig.get(callOperationNode, "@client-jndi-name");				
+				LOG.debug("Retrieving MongoClientProvider by  JNDI name: "+jndiName);
+				
+				MongoClientProvider mongoClientProvider = (MongoClientProvider) jndiContext.lookup(jndiName);				
+				client = Optional.ofNullable(mongoClientProvider.getMongoClient());
+				
+			} else {
+				
+				String xpath = XPathFinder.buildXPath(callOperationNode.getParentNode());
+				LOG.debug("Retrieving MongoClient from Channel map using key: "+xpath);
+				
+				client = Optional.ofNullable(mongoClients.get(xpath));
+		    	
+			}
+		} catch (XMLConfigException e) {
+			LOG.debug("Error reading XML config", e);
+		} catch (NamingException e) {
+			LOG.debug("Error retrieving MongoClientProvider from JNDI context", e);
+		}    	
     	
+    	
+    	return client;
     }
 	
 
