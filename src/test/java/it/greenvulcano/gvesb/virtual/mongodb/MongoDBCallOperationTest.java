@@ -1,25 +1,5 @@
 package it.greenvulcano.gvesb.virtual.mongodb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import org.bson.Document;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
@@ -35,6 +15,24 @@ import it.greenvulcano.gvesb.buffer.GVException;
 import it.greenvulcano.gvesb.channel.mongodb.MongoDBChannel;
 import it.greenvulcano.gvesb.core.GreenVulcano;
 import it.greenvulcano.gvesb.virtual.OperationFactory;
+import org.bson.Document;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.*;
 
 public class MongoDBCallOperationTest {
 	
@@ -102,43 +100,194 @@ public class MongoDBCallOperationTest {
 		assertTrue(IntStream.range(0, result.length())
 					         .mapToObj(result::getJSONObject)
 					         .map(measure-> measure.getJSONObject("sensor").getString("physicalId"))
-							 .allMatch("BATTERY"::equals));	
+							 .allMatch("BATTERY"::equals));
 	}
-	
+
 	@Test
 	public void testUpdate() throws GVException {
-			
+
 		// Update all BATTERY records adding new field
-		
-		GVBuffer inputGVBuffer = new GVBuffer();		
+
+		GVBuffer inputGVBuffer = new GVBuffer();
 		inputGVBuffer.setService("TEST");
 		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
 		inputGVBuffer.setProperty("STATEMENT", "{$set :{\"verified\": true }}");
-		inputGVBuffer.setObject("test input");		
-		
-		GreenVulcano greenVulcano = new GreenVulcano();		
+		inputGVBuffer.setObject("test input");
+
+		GreenVulcano greenVulcano = new GreenVulcano();
 		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testUpdate");
-		
-		assertEquals("2", outputGVBuffer.getProperty("REC_UPDATE"));		
-		
+
+		assertEquals("2", outputGVBuffer.getProperty("REC_UPDATE"));
+
 		// Test actual data update
-		
-		inputGVBuffer = new GVBuffer();		
+
+		inputGVBuffer = new GVBuffer();
 		inputGVBuffer.setService("TEST");
 		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
-		inputGVBuffer.setObject("test input");		
-		
-		greenVulcano = new GreenVulcano();		
+		inputGVBuffer.setObject("test input");
+
+		greenVulcano = new GreenVulcano();
 		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
-		
+
 		assertEquals("2", outputGVBuffer.getProperty("REC_READ"));
-		
+
 		JSONArray result = new JSONArray(outputGVBuffer.getObject().toString());
 		assertTrue(IntStream.range(0, result.length())
-					         .mapToObj(result::getJSONObject)					         
-							 .allMatch(measure->measure.getBoolean("verified")));	
+					         .mapToObj(result::getJSONObject)
+							 .allMatch(measure->measure.getBoolean("verified")));
 	}
-	
+
+	@Test
+	public void testDeleteOne() throws GVException {
+
+		// CREATE a single BATTERY record
+
+		GVBuffer inputCreateGVBuffer = new GVBuffer();
+		inputCreateGVBuffer.setService("TEST");
+		inputCreateGVBuffer.setObject("{ \"physicalId\": \"BATTERY\" }");
+
+		GreenVulcano greenVulcano = new GreenVulcano();
+		GVBuffer outputCreateGVBuffer = greenVulcano.forward(inputCreateGVBuffer, "testCreate");
+
+		assertNotNull(outputCreateGVBuffer.getObject());
+
+		JSONObject createResult = new JSONObject(outputCreateGVBuffer.getObject().toString());
+
+		String insertedDocumentId = null;
+
+		try {
+
+			insertedDocumentId = createResult.getJSONObject("_id").getString("$oid");
+
+		} catch (Exception e) { throw new GVException(e.getMessage()); }
+
+
+
+		// READ the inserted record
+
+		GVBuffer inputFind1GVBuffer = new GVBuffer();
+		inputFind1GVBuffer.setService("TEST");
+		inputFind1GVBuffer.setProperty("FILTER", "{\"_id\": { $oid:\"" + insertedDocumentId + "\" } }");
+		inputFind1GVBuffer.setObject("test input");
+
+		GVBuffer outputFind1GVBuffer = greenVulcano.forward(inputFind1GVBuffer, "testFind");
+
+		assertNotNull(outputFind1GVBuffer.getObject());
+
+		JSONArray find1Result = new JSONArray(outputFind1GVBuffer.getObject().toString());
+		assertEquals(1, find1Result.length());
+		assertTrue(IntStream.range(0, find1Result.length())
+				.mapToObj(find1Result::getJSONObject)
+				.map(battery-> battery.getJSONObject("_id").getString("$oid"))
+				.allMatch(insertedDocumentId::equals));
+
+
+
+		// DELETE the inserted record
+
+		GVBuffer inputDeleteGVBuffer = new GVBuffer();
+		inputDeleteGVBuffer.setService("TEST");
+		inputDeleteGVBuffer.setObject("{\"_id\": { $oid:\"" + insertedDocumentId + "\" } }");
+
+		GVBuffer outputDeleteGVBuffer = greenVulcano.forward(inputDeleteGVBuffer, "testDelete");
+
+		assertNotNull(outputDeleteGVBuffer.getObject());
+
+		JSONObject deleteResult = new JSONObject(outputDeleteGVBuffer.getObject().toString());
+
+		assertFalse(deleteResult.isNull("deletedDocuments"));
+		assertEquals(1, deleteResult.getInt("deletedDocuments"));
+
+
+
+		// READ the deleted record
+
+		GVBuffer inputFind2GVBuffer = new GVBuffer();
+		inputFind2GVBuffer.setService("TEST");
+		inputFind2GVBuffer.setProperty("FILTER", "{\"_id\": { $oid:\"" + insertedDocumentId + "\" } }");
+		inputFind2GVBuffer.setObject("test input");
+
+		GVBuffer outputFind2GVBuffer = greenVulcano.forward(inputFind2GVBuffer, "testFind");
+
+		assertNotNull(outputFind2GVBuffer.getObject());
+
+		JSONArray find2Result = new JSONArray(outputFind2GVBuffer.getObject().toString());
+		assertEquals(0, find2Result.length());
+
+	}
+
+	@Test
+	public void testDeleteMany() throws GVException {
+
+		// CREATE a BATTERY record and a GPS record
+
+		GVBuffer inputCreateGVBuffer = new GVBuffer();
+		inputCreateGVBuffer.setService("TEST");
+		inputCreateGVBuffer.setObject("[{ \"physicalId\": \"BATTERY\" }, { \"physicalId\": \"GPS\" }]");
+
+		GreenVulcano greenVulcano = new GreenVulcano();
+		GVBuffer outputCreateGVBuffer = greenVulcano.forward(inputCreateGVBuffer, "testCreate");
+
+		assertNotNull(outputCreateGVBuffer.getObject());
+
+		JSONArray createResult = new JSONArray(outputCreateGVBuffer.getObject().toString());
+
+		assertEquals(2, createResult.length());
+
+
+
+		// READ the inserted records
+
+		GVBuffer inputFind1GVBuffer = new GVBuffer();
+		inputFind1GVBuffer.setService("TEST");
+		inputFind1GVBuffer.setProperty("FILTER", "{ \"$or\": [ { \"physicalId\": \"BATTERY\" }, { \"physicalId\": \"GPS\" } ] }");
+		inputFind1GVBuffer.setObject("test input");
+
+		GVBuffer outputFind1GVBuffer = greenVulcano.forward(inputFind1GVBuffer, "testFind");
+
+		assertNotNull(outputFind1GVBuffer.getObject());
+
+		JSONArray find1Result = new JSONArray(outputFind1GVBuffer.getObject().toString());
+		assertEquals(2, find1Result.length());
+		assertTrue(IntStream.range(0, find1Result.length())
+				.mapToObj(find1Result::getJSONObject)
+				.map(device-> device.getString("physicalId")).allMatch(id -> id.equals("BATTERY") || id.equals("GPS")));
+
+
+
+		// DELETE the inserted records
+
+		GVBuffer inputDeleteGVBuffer = new GVBuffer();
+		inputDeleteGVBuffer.setService("TEST");
+		inputDeleteGVBuffer.setObject("{ \"$or\": [ { \"physicalId\": \"BATTERY\" }, { \"physicalId\": \"GPS\" } ] }");
+
+		GVBuffer outputDeleteGVBuffer = greenVulcano.forward(inputDeleteGVBuffer, "testDelete");
+
+		assertNotNull(outputDeleteGVBuffer.getObject());
+
+		JSONObject deleteResult = new JSONObject(outputDeleteGVBuffer.getObject().toString());
+
+		assertFalse(deleteResult.isNull("deletedDocuments"));
+		assertEquals(2, deleteResult.getInt("deletedDocuments"));
+
+
+
+		// READ the deleted record
+
+		GVBuffer inputFind2GVBuffer = new GVBuffer();
+		inputFind2GVBuffer.setService("TEST");
+		inputFind2GVBuffer.setProperty("FILTER", "{ \"$or\": [ { \"physicalId\": \"BATTERY\" }, { \"physicalId\": \"GPS\" } ] }");
+		inputFind2GVBuffer.setObject("test input");
+
+		GVBuffer outputFind2GVBuffer = greenVulcano.forward(inputFind2GVBuffer, "testFind");
+
+		assertNotNull(outputFind2GVBuffer.getObject());
+
+		JSONArray find2Result = new JSONArray(outputFind2GVBuffer.getObject().toString());
+		assertEquals(0, find2Result.length());
+
+	}
+
 	@AfterClass
 	public static void destroy() throws Exception {		
 		
@@ -147,4 +296,5 @@ public class MongoDBCallOperationTest {
 		mongod.stop();
 		mongodExecutable.stop();
 	}
+
 }
