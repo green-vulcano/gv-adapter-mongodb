@@ -53,7 +53,9 @@ public class MongoDBOFind extends MongoDBO {
 		
 		StringBuilder jsonResult = new StringBuilder("[");
 		
+		int count = 0;
 		while(resultset.hasNext()) {
+			count++;
 			jsonResult.append(resultset.next());
 			
 		    if(resultset.hasNext()) {
@@ -65,7 +67,7 @@ public class MongoDBOFind extends MongoDBO {
 		
 		jsonResult.append("]");
 
-
+		gvBuffer.setProperty("REC_READ", Integer.toString(count));
         gvBuffer.setObject(jsonResult);
 		
 	}	

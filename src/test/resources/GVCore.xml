@@ -62,7 +62,7 @@
             <Service group-name="DEFAULT_GRP" id-service="TEST" service-activation="on"
                      statistics="off">
                 <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
-                           name="testCallOperation" operation-activation="on"
+                           name="testFind" operation-activation="on"
                            type="operation">
                    
                     <Flow first-node="invokeCallOperation">
@@ -71,7 +71,25 @@
                                          id="invokeCallOperation" id-channel="TestChannel"
                                          id-system="TestSystem" input="inGVBuffer"
                                          next-node-id="done" op-type="call"  dump-in-out="true"
-                                         operation-name="testMongoDBCall" output="outGVBuffer"
+                                         operation-name="testMongoDBCallFind" output="outGVBuffer"
+                                         type="flow-node"/>
+                        
+                        <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                                   id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
+                                   point-x="391" point-y="150" type="flow-node"/>
+                    </Flow>
+                </Operation>
+                <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
+                           name="testUpdate" operation-activation="on"
+                           type="operation">
+                   
+                    <Flow first-node="invokeCallOperation">
+                        
+                        <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                         id="invokeCallOperation" id-channel="TestChannel"
+                                         id-system="TestSystem" input="inGVBuffer"
+                                         next-node-id="done" op-type="call"  dump-in-out="true"
+                                         operation-name="testMongoDBCallUpdate" output="outGVBuffer"
                                          type="flow-node"/>
                         
                         <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
@@ -90,8 +108,15 @@
             <System id-system="TestSystem" system-activation="on">
                 
                 <Channel id-channel="TestChannel" endpoint="mongodb://localhost:27017"  type="MongoDBAdapter" enabled="true">
-                    <mongodb-call name="testMongoDBCall" database="gviot" collection="measures_1" type="call">
-                          <find><![CDATA[{"sensor.physicalId": { $eq:"BATTERY" } }]]></find>
+                    <mongodb-call name="testMongoDBCallFind" database="gviot" collection="measures_1" type="call">
+                          <find>@{{FILTER}}</find>
+                    </mongodb-call >
+                    
+                     <mongodb-call name="testMongoDBCallUpdate" database="gviot" collection="measures_1" type="call">
+                          <update upsert="false">
+                             <filter>@{{FILTER}}</filter>
+                             <statement>@{{STATEMENT}}</statement>
+                          </update>
                     </mongodb-call >
                 </Channel>
 

@@ -7,12 +7,11 @@ import com.mongodb.client.MongoCollection;
 
 import it.greenvulcano.gvesb.buffer.GVBuffer;
 import it.greenvulcano.gvesb.buffer.GVException;
-import it.greenvulcano.gvesb.virtual.mongodb.MongoDBQueryCallOperation;
 import it.greenvulcano.util.metadata.PropertiesHandlerException;
 
 public abstract class MongoDBO {
 	
-	protected static final Logger logger = org.slf4j.LoggerFactory.getLogger(MongoDBQueryCallOperation.class);
+	protected static final Logger logger = org.slf4j.LoggerFactory.getLogger(MongoDBO.class);
 	
 	public abstract String getDBOperationName();
 	

@@ -1,5 +1,6 @@
 package it.greenvulcano.gvesb.virtual.mongodb;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -89,10 +90,11 @@ public class MongoDBCallOperationTest {
 				
 		GVBuffer inputGVBuffer = new GVBuffer();		
 		inputGVBuffer.setService("TEST");
-		inputGVBuffer.setObject("test input");
+		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
+		inputGVBuffer.setObject("test input");		
 		
 		GreenVulcano greenVulcano = new GreenVulcano();		
-		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testCallOperation");
+		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
 				
 		assertNotNull(outputGVBuffer.getObject());
 		
@@ -101,6 +103,40 @@ public class MongoDBCallOperationTest {
 					         .mapToObj(result::getJSONObject)
 					         .map(measure-> measure.getJSONObject("sensor").getString("physicalId"))
 							 .allMatch("BATTERY"::equals));	
+	}
+	
+	@Test
+	public void testUpdate() throws GVException {
+			
+		// Update all BATTERY records adding new field
+		
+		GVBuffer inputGVBuffer = new GVBuffer();		
+		inputGVBuffer.setService("TEST");
+		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
+		inputGVBuffer.setProperty("STATEMENT", "{$set :{\"verified\": true }}");
+		inputGVBuffer.setObject("test input");		
+		
+		GreenVulcano greenVulcano = new GreenVulcano();		
+		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testUpdate");
+		
+		assertEquals("2", outputGVBuffer.getProperty("REC_UPDATE"));		
+		
+		// Test actual data update
+		
+		inputGVBuffer = new GVBuffer();		
+		inputGVBuffer.setService("TEST");
+		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
+		inputGVBuffer.setObject("test input");		
+		
+		greenVulcano = new GreenVulcano();		
+		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+		
+		assertEquals("2", outputGVBuffer.getProperty("REC_READ"));
+		
+		JSONArray result = new JSONArray(outputGVBuffer.getObject().toString());
+		assertTrue(IntStream.range(0, result.length())
+					         .mapToObj(result::getJSONObject)					         
+							 .allMatch(measure->measure.getBoolean("verified")));	
 	}
 	
 	@AfterClass
