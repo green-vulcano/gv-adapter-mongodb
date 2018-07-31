@@ -18,12 +18,16 @@ import it.greenvulcano.gvesb.virtual.OperationFactory;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,8 +45,8 @@ public class MongoDBCallOperationTest {
 	private static MongodExecutable mongodExecutable;
 	private static MongodProcess mongod;
 	
-	//private final String CONNECTION_STRING = "mongodb://localhost:27017";
-	
+	private static MongoClient mongoClient;
+			
 	@BeforeClass
 	public static void init() throws Exception {
 		MongodStarter starter = MongodStarter.getDefaultInstance();
@@ -57,8 +61,19 @@ public class MongoDBCallOperationTest {
 		mongodExecutable = starter.prepare(mongodConfig);		
 		mongod = mongodExecutable.start();
 			
-		MongoClient mongoClient = new MongoClient(bindIp, port);
+		mongoClient = new MongoClient(bindIp, port);		
+		
+		
+		XMLConfig.setBaseConfigPath(MongoDBCallOperationTest.class.getClassLoader().getResource(".").getPath());		
+		OperationFactory.registerSupplier("mongodb-call", MongoDBCallOperation::new);	
+				
+		MongoDBChannel.setup();		
+		
+		
+	}
 	
+	@Before
+	public void initDb() throws URISyntaxException, IOException {
 		Path sampleDataPath = Paths.get(MongoDBCallOperationTest.class.getResource("/measures_1.json").toURI());
 		String sampleDataJSON = Files.lines(sampleDataPath, Charset.forName("UTF-8"))
 				           .collect(Collectors.joining());
@@ -69,19 +84,16 @@ public class MongoDBCallOperationTest {
 				                                 .map(JSONObject::toString)
 				                                 .map(Document::parse)
 				                                 .collect(Collectors.toList());
+		
 		LOG.debug("Loading sample data for devices");
 		mongoClient.getDatabase("gviot").getCollection("measures_1").insertMany(deviceDocuments);
-		
-		mongoClient.close();
-		
-		
-		XMLConfig.setBaseConfigPath(MongoDBCallOperationTest.class.getClassLoader().getResource(".").getPath());		
-		OperationFactory.registerSupplier("mongodb-call", MongoDBCallOperation::new);	
-				
-		MongoDBChannel.setup();		
-		
-		
 	}
+	
+	@After
+	public void cleanDb() {		
+		mongoClient.getDatabase("gviot").getCollection("measures_1").deleteMany(Document.parse("{}"));
+	}
+	
 	
 	@Test
 	public void testFind() throws GVException {
@@ -191,8 +203,7 @@ public class MongoDBCallOperationTest {
 	@Test
 	public void testUpdate() throws GVException {
 
-		// Update all BATTERY records adding new field
-
+		// Update all BATTERY records adding openssl s_client -connect apiaruba.getradice.com:80		
 		GVBuffer inputGVBuffer = new GVBuffer();
 		inputGVBuffer.setService("TEST");
 		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
@@ -377,6 +388,8 @@ public class MongoDBCallOperationTest {
 
 	@AfterClass
 	public static void destroy() throws Exception {		
+		
+		mongoClient.close();
 		
 		MongoDBChannel.shutdown();
 	
