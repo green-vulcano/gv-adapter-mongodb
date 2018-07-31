@@ -29,6 +29,7 @@ public class MongoDBOInsert extends MongoDBO {
 		} catch (Exception e) {
 
 			return Optional.empty();
+
 		}
 
 	};

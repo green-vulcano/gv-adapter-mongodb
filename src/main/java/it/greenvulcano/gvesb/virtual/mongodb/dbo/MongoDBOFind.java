@@ -21,12 +21,13 @@ public class MongoDBOFind extends MongoDBO {
 		
 		try {
 		
-			String query = node.getTextContent();				
+			String query = node.getTextContent();
 			return Optional.of(new MongoDBOFind(query));
 			
 		} catch (Exception e) {
 			
 			return Optional.empty();
+
 		}
 		
 	};
