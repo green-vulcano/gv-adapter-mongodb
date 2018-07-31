@@ -21,9 +21,12 @@ public class MongoDBOFactory {
 	static {
 
 		dboSuppliers.put(MongoDBOFind.NAME, MongoDBOFind.BUILDER);
+
 		dboSuppliers.put(MongoDBOUpdate.NAME, MongoDBOUpdate.BUILDER);
 
 		dboSuppliers.put(MongoDBOInsert.NAME, MongoDBOInsert.BUILDER);
+
+		dboSuppliers.put(MongoDBODelete.NAME, MongoDBODelete.BUILDER);
 
 		// TODO repeat for each DBO operation
 
