@@ -35,7 +35,7 @@ public class MongoDBChannel {
 		
 		try {
 		
-			NodeList mongoChannelList = XMLConfig.getNodeList(GreenVulcanoConfig.getSystemsConfigFileName(),"//Channel[@type='MongoDBAdapter' and @enabled='true']");
+			NodeList mongoChannelList = XMLConfig.getNodeList(GreenVulcanoConfig.getSystemsConfigFileName(),"//Channel[@type='MongoDBAdapter']");
 			
 			LOG.debug("Enabled MongoDBAdapter channels found: "+mongoChannelList.getLength());
 			IntStream.range(0, mongoChannelList.getLength())
@@ -66,12 +66,16 @@ public class MongoDBChannel {
     private static void buildMongoClient(Node mongoChannelNode) {
     	try {
 
-    		String uri = PropertiesHandler.expand(XMLUtils.get_S(mongoChannelNode, "@endpoint"));
+    		if (XMLConfig.exists(mongoChannelNode, "@endpoint") && XMLConfig.getBoolean(mongoChannelNode, "@enabled", true)) {
+    			
+    			LOG.debug("Configuring MongoClient instance for Channel "+XMLUtils.get_S(mongoChannelNode, "@id-channel")+ " in System" + XMLUtils.get_S(mongoChannelNode.getParentNode(), "@id-system"));
+    			
+    			String uri = PropertiesHandler.expand(XMLUtils.get_S(mongoChannelNode, "@endpoint"));
+        		MongoClientURI mongoClientURI = new MongoClientURI(uri);        		
+        		mongoClients.put(XPathFinder.buildXPath(mongoChannelNode), new MongoClient(mongoClientURI));
 
-    		MongoClientURI mongoClientURI = new MongoClientURI(uri);
-    		
-    		mongoClients.put(XPathFinder.buildXPath(mongoChannelNode), new MongoClient(mongoClientURI));
-    		
+    		}    		
+    		    		
     	} catch (Exception e) {
     		 LOG.error("Error configuring MongoClient", e);
 		}
@@ -107,9 +111,6 @@ public class MongoDBChannel {
     	
     	
     	return client;
-    }
-	
-
-	
+    }	
 
 }
