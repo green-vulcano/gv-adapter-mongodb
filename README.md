@@ -95,30 +95,37 @@ list | grep GreenVulcano ESB VCL interface for MongoDB
 
 In order to use the features of the MongoDB VCL adapter in your GreenVulcano project, you need to define a proper System-Channel-Operation set of nodes.
 
-# TODO updating the README file from this point... Work In Progress
+# TODO updating the README file from this point... Work In Progress!
 
+![Work In Progress](https://media.giphy.com/media/8EmeieJAGjvUI/giphy.gif)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
 **For the rest of the paragraph**, let's assume you want to interact with a MongoDB database called ```documents``` hosted on ```192.168.10.10``` on port ```27017```.
 
 ### Declaring the System-Channel-Operation for the MongoDB database
