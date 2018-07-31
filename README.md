@@ -18,9 +18,19 @@ This is the implementation of a GreenVulcano VCL adapter for the MongoDB databas
 
 ### Prerequisites
 
-You need to have Maven installed in your computer. Please refer to [this link](https://maven.apache.org/install.html) for further reference.
+First, you need to have installed Java Development Kit (JDK) 1.7 or above.
 
-In order to install the bundle in Apache Karaf to use it for a GreenVulcano application project, you need to install its dependencies. Open the Apache Karaf terminal and type the following command:
+Then, you need to have installed Apache Maven (3.5.4 or higher) and Apache Karaf 4.1.5. Please refer to the following links for further reference:
+- Apache Maven 3.5.4:
+    - [Download](http://mirror.nohup.it/apache/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz)
+    - [Installation steps](https://maven.apache.org/install.html)
+- Apache Karaf 4.1.5:
+    - [Download](http://www.apache.org/dyn/closer.lua/karaf/4.1.5/apache-karaf-4.1.5.tar.gz)
+    - Installation steps: simply extract the Apache Karaf directory in any path you want. Verify that the Apache Karaf installation is operational by running the executable ```./bin/karaf``` from the Apache Karaf root directory (a Karaf shell should be displayed).
+
+Next, you need to install the GreenVulcano engine on the Apache Karaf container. Please refer to [this link](https://greenvulcano.github.io/gv-documentation/pages/installation/Installation/#installation) for further reference.
+
+In order to install the bundle in Apache Karaf to use it for a GreenVulcano application project, you need to install its dependencies. Open the Apache Karaf terminal by running the Karaf executable and type the following command:
 
 ```shell
 karaf@root()> bundle:install mvn:org.mongodb/mongo-java-driver/3.4.1
@@ -67,7 +77,7 @@ This constraint can be enforced by properly configuring the *level* of the Karaf
 For the VCL adapter bundle, we will use a bundle level higher than the GreenVulcano core bundles (i.e. ```80```). The following command will install the VCL adapter bundle and set its level to ```96``` by convention, using the ```-l``` attribute:
 
 ```shell
-karaf@root()> bundle:install -l 96 mvn:it.greenvulcano.gvesb.adapter/gvvcl-mongo/1.0.0-SNAPSHOT
+karaf@root()> bundle:install -l 96 mvn:it.greenvulcano.gvesb.adapter/gvvcl-mongo/4.0.0-SNAPSHOT
 
 Bundle ID: x
 ```
@@ -83,7 +93,32 @@ list | grep GreenVulcano ESB VCL interface for MongoDB
 
 ## Using the VCL adapter in your GreenVulcano project
 
-In order to use the features of the MongoDB VCL adapter in your GreenVulcano project, you need to define a proper System-Channel-Operation set of nodes.  
+In order to use the features of the MongoDB VCL adapter in your GreenVulcano project, you need to define a proper System-Channel-Operation set of nodes.
+
+# TODO updating the README file from this point... Work In Progress
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 **For the rest of the paragraph**, let's assume you want to interact with a MongoDB database called ```documents``` hosted on ```192.168.10.10``` on port ```27017```.
 
 ### Declaring the System-Channel-Operation for the MongoDB database
