@@ -80,6 +80,24 @@
                     </Flow>
                 </Operation>
                 <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
+                           name="testCreate" operation-activation="on"
+                           type="operation">
+
+                    <Flow first-node="invokeCallOperation">
+
+                        <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                         id="invokeCallOperation" id-channel="TestChannel"
+                                         id-system="TestSystem" input="inGVBuffer"
+                                         next-node-id="done" op-type="call"  dump-in-out="true"
+                                         operation-name="testMongoDBCallInsert" output="outGVBuffer"
+                                         type="flow-node"/>
+
+                        <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                                   id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
+                                   point-x="391" point-y="150" type="flow-node"/>
+                    </Flow>
+                </Operation>
+                <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
                            name="testUpdate" operation-activation="on"
                            type="operation">
                    
@@ -92,6 +110,24 @@
                                          operation-name="testMongoDBCallUpdate" output="outGVBuffer"
                                          type="flow-node"/>
                         
+                        <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                                   id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
+                                   point-x="391" point-y="150" type="flow-node"/>
+                    </Flow>
+                </Operation>
+                <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
+                           name="testDelete" operation-activation="on"
+                           type="operation">
+
+                    <Flow first-node="invokeCallOperation">
+
+                        <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                         id="invokeCallOperation" id-channel="TestChannel"
+                                         id-system="TestSystem" input="inGVBuffer"
+                                         next-node-id="done" op-type="call"  dump-in-out="true"
+                                         operation-name="testMongoDBCallDelete" output="outGVBuffer"
+                                         type="flow-node"/>
+
                         <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
                                    id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
                                    point-x="391" point-y="150" type="flow-node"/>
@@ -110,14 +146,22 @@
                 <Channel id-channel="TestChannel" endpoint="mongodb://localhost:27017"  type="MongoDBAdapter" enabled="true">
                     <mongodb-call name="testMongoDBCallFind" database="gviot" collection="measures_1" type="call">
                           <find>@{{FILTER}}</find>
-                    </mongodb-call >
+                    </mongodb-call>
+
+                    <mongodb-call name="testMongoDBCallInsert" database="gviot" collection="measures_1" type="call">
+                        <insert></insert>
+                    </mongodb-call>
                     
                      <mongodb-call name="testMongoDBCallUpdate" database="gviot" collection="measures_1" type="call">
                           <update upsert="false">
                              <filter>@{{FILTER}}</filter>
                              <statement>@{{STATEMENT}}</statement>
                           </update>
-                    </mongodb-call >
+                    </mongodb-call>
+
+                    <mongodb-call name="testMongoDBCallDelete" database="gviot" collection="measures_1" type="call">
+                        <delete></delete>
+                    </mongodb-call>
                 </Channel>
 
             </System>
