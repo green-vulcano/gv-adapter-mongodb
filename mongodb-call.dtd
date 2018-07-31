@@ -1,5 +1,5 @@
 <!-- a single MongoDB generic operation -->
-<!ELEMENT mongodb-call (find|listCollections)>
+<!ELEMENT mongodb-call (find|insert|update|delete)>
 
 <!-- fixed parameter with value "call" -->
 <!ATTLIST mongodb-call type CDATA #FIXED "call">
@@ -13,6 +13,18 @@
 <!-- the name of the MongoDB collection to use to execute the operation -->
 <!ATTLIST mongodb-call collection CDATA #REQUIRED>
 
+<!-- the JNDI name of the MongoClientProvider instance -->
+<!ATTLIST mongodb-call client-jndi-name CDATA #IMPLIED>
+
 <!-- the supported commands -->
 <!ELEMENT find (#PCDATA)>
-<!ELEMENT listCollections (EMPTY)>
+<!ELEMENT insert (EMPTY)>
+<!ATTLIST insert transactional (true|false) "false">
+
+<!ELEMENT update (filter*|statement)>
+<!ATTLIST update transactional (true|false) "false">
+<!ATTLIST update upsert (true|false) "false">
+<!ELEMENT filter (#PCDATA)>
+
+<!-- Omitting definition of element statement because is already defined in GVCore dtds 
+<!ELEMENT statement (#PCDATA)> -->
