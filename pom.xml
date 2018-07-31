@@ -201,7 +201,8 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Export-Package/>
+                        <Export-Package>it.greenvulcano.gvesb.channel.mongodb.service,
+                            it.greenvulcano.gvesb.channel.mongodb.service.connector</Export-Package>
                         <Import-Package>*</Import-Package>
                         <Bundle-Activator>it.greenvulcano.gvesb.channel.mongodb.Activator</Bundle-Activator>
                     </instructions>
