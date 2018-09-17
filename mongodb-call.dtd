@@ -17,14 +17,24 @@
 <!ATTLIST mongodb-call client-jndi-name CDATA #IMPLIED>
 
 <!-- the supported commands -->
-<!ELEMENT find (#PCDATA)>
+<!ELEMENT find (query|sort*|projection*)>
+
+<!ATTLIST find skip CDATA #IMPLIED>
+<!ATTLIST find limit CDATA #IMPLIED>
+
+<!ELEMENT query (#PCDATA)>
+<!ELEMENT sort (#PCDATA)>
+<!ELEMENT projection (#PCDATA)>
+
 <!ELEMENT insert (EMPTY)>
 <!ATTLIST insert transactional (true|false) "false">
 
-<!ELEMENT update (filter*|statement)>
+<!ELEMENT update (filter*)>
 <!ATTLIST update transactional (true|false) "false">
 <!ATTLIST update upsert (true|false) "false">
 <!ELEMENT filter (#PCDATA)>
+
+<!--<!ELEMENT delete>-->
 
 <!-- Omitting definition of element statement because is already defined in GVCore dtds 
 <!ELEMENT statement (#PCDATA)> -->
