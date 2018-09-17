@@ -68,12 +68,31 @@ public class MongoDBOFind extends MongoDBO {
 	@Override
 	public void execute(MongoCollection<Document> mongoCollection, GVBuffer gvBuffer) throws PropertiesHandlerException, GVException {
 
+		// expand the content of children of find element from the GVBuffer
 		String queryCommand = PropertiesHandler.expand(query, gvBuffer);
 		String querySort = PropertiesHandler.expand(sort, gvBuffer);
 		String queryProjection = PropertiesHandler.expand(projection, gvBuffer);
 
-		Integer querySkip = Integer.valueOf(PropertiesHandler.expand(Integer.toString(skip), gvBuffer));
-		Integer queryLimit = Integer.valueOf(PropertiesHandler.expand(Integer.toString(limit), gvBuffer));
+		// prepare the skip and limit parameters of the find element
+		Integer querySkip = null;
+		Integer queryLimit = null;
+
+		try {
+
+			// expand the the value of skip and limit parameters from the GVBuffer
+			querySkip = Integer.valueOf(PropertiesHandler.expand(Integer.toString(skip), gvBuffer));
+			queryLimit = Integer.valueOf(PropertiesHandler.expand(Integer.toString(limit), gvBuffer));
+
+		} catch (NumberFormatException e) {
+
+			// a non-integer value was found for either skip or limit parameter
+			String exceptionMessage = "Non-integer parameter passed to <find> element: " + e.getCause();
+
+			logger.error(exceptionMessage);
+
+			throw new GVException(exceptionMessage);
+
+		}
 
 		Document commandDocument = Document.parse(queryCommand);
 		Document sortDocument = Document.parse(querySort);
@@ -85,7 +104,7 @@ public class MongoDBOFind extends MongoDBO {
 				+ "; skip " + querySkip
 				+ "; limit " + queryLimit);
 		
-		MongoCursor<String> resultset = mongoCollection
+		MongoCursor<String> resultSet = mongoCollection
 				.find(commandDocument)
 				.projection(projectionDocument)
 				.sort(sortDocument)
@@ -96,11 +115,11 @@ public class MongoDBOFind extends MongoDBO {
 		StringBuilder jsonResult = new StringBuilder("[");
 		
 		int count = 0;
-		while(resultset.hasNext()) {
+		while(resultSet.hasNext()) {
 			count++;
-			jsonResult.append(resultset.next());
+			jsonResult.append(resultSet.next());
 			
-		    if(resultset.hasNext()) {
+		    if(resultSet.hasNext()) {
 		    	jsonResult.append(",");
 		    } else {
 		    	break;
