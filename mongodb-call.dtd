@@ -19,7 +19,7 @@
 <!-- the supported commands -->
 <!ELEMENT find (query|sort*|projection*)>
 
-<!ATTLIST find skip CDATA #IMPLIED>
+<!ATTLIST find offset CDATA #IMPLIED>
 <!ATTLIST find limit CDATA #IMPLIED>
 
 <!ELEMENT query (#PCDATA)>
