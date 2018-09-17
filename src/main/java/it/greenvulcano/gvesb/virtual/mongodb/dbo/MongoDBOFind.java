@@ -24,8 +24,8 @@ public class MongoDBOFind extends MongoDBO {
 			String projection = XMLConfig.get(node, "./projection/text()", "{}");
 			String sort = XMLConfig.get(node, "./sort/text()", "{}");
 
-			Integer skip = XMLConfig.getInteger(node, "@offset", 0);
-			Integer limit = XMLConfig.getInteger(node, "@limit", 0);
+			Integer skip = Integer.valueOf(XMLConfig.get(node, " @offset", "0"));
+			Integer limit = Integer.valueOf(XMLConfig.get(node, "@limit", "0"));
 
 			return Optional.of(new MongoDBOFind(query,
 					sort, projection, skip, limit));
