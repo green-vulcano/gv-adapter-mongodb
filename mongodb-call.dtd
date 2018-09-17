@@ -1,5 +1,5 @@
 <!-- a single MongoDB generic operation -->
-<!ELEMENT mongodb-call (find|insert|update|delete)>
+<!ELEMENT mongodb-call (find|insert|update)<!--|delete-->
 
 <!-- fixed parameter with value "call" -->
 <!ATTLIST mongodb-call type CDATA #FIXED "call">
