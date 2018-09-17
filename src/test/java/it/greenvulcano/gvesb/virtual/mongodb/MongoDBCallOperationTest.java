@@ -112,29 +112,24 @@ public class MongoDBCallOperationTest {
 					         .map(measure-> measure.getJSONObject("sensor").getString("physicalId"))
 							 .allMatch("BATTERY"::equals));
 		
-		inputGVBuffer.setProperty("limit", "2");
+		inputGVBuffer.setProperty("limit", "1");
 		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
 		
 		assertNotNull(outputGVBuffer.getObject());
 		
 		result = new JSONArray(outputGVBuffer.getObject().toString());
 		
-		assertEquals(2, result.length());
-
-	}
-
-	@Test
-	public void testProjection() throws GVException {
+		assertEquals(1, result.length());
 
 	}
 
 	@Test
 	public void testSort() throws GVException {
 
-		/*GVBuffer inputGVBuffer = new GVBuffer();
+		GVBuffer inputGVBuffer = new GVBuffer();
 		inputGVBuffer.setService("TEST");
-		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
-		inputGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
+		inputGVBuffer.setProperty("FILTER", "{}");
+		inputGVBuffer.setProperty("SORT", "{\"sensor.physicalId\": 1 }");
 
 		GreenVulcano greenVulcano = new GreenVulcano();
 		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
@@ -142,19 +137,14 @@ public class MongoDBCallOperationTest {
 		assertNotNull(outputGVBuffer.getObject());
 
 		JSONArray result = new JSONArray(outputGVBuffer.getObject().toString());
-		assertTrue(IntStream.range(0, result.length())
-				.mapToObj(result::getJSONObject)
-				.map(measure-> measure.getJSONObject("sensor").getString("physicalId"))
-				.allMatch("BATTERY"::equals));
-
-		inputGVBuffer.setProperty("limit", "2");
+		assertEquals("ACCELEROMETER", result.getJSONObject(0).query("/sensor/physicalId").toString());
+		
+		//Reverse order
+		inputGVBuffer.setProperty("SORT", "{\"sensor.physicalId\": -1 }");
 		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
-
-		assertNotNull(outputGVBuffer.getObject());
-
+		
 		result = new JSONArray(outputGVBuffer.getObject().toString());
-
-		assertEquals(2, result.length());*/
+		assertEquals("GPS", result.getJSONObject(0).query("/sensor/physicalId").toString());
 
 	}
 

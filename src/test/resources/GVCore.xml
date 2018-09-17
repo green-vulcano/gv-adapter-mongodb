@@ -145,7 +145,7 @@
                 
                 <Channel id-channel="TestChannel" endpoint="mongodb://localhost:27017"  type="MongoDBAdapter" enabled="true">
                     <mongodb-call name="testMongoDBCallFind" database="gviot" collection="measures_1" type="call">
-                          <find offset="@{{offset}}" limit="@{{limit}}">
+                          <find offset="@{{offset::0}}" limit="@{{limit::128}}">
                             <query>@{{FILTER}}</query>
                             <sort>@{{SORT}}</sort>
                             <!--<projection>@{{PROJECTION}}</projection>-->

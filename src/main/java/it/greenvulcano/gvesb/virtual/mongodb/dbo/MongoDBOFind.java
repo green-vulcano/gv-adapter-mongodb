@@ -24,8 +24,8 @@ public class MongoDBOFind extends MongoDBO {
 			String projection = XMLConfig.get(node, "./projection/text()", "{}");
 			String sort = XMLConfig.get(node, "./sort/text()", "{}");
 
-			Integer skip = Integer.valueOf(XMLConfig.get(node, " @offset", "0"));
-			Integer limit = Integer.valueOf(XMLConfig.get(node, "@limit", "0"));
+			String skip = XMLConfig.get(node, " @offset", "0");
+			String limit = XMLConfig.get(node, "@limit", Integer.toString(Integer.MAX_VALUE));
 
 			return Optional.of(new MongoDBOFind(query,
 					sort, projection, skip, limit));
@@ -42,15 +42,15 @@ public class MongoDBOFind extends MongoDBO {
 	private final String sort;
 	private final String projection;
 
-	private final Integer skip;
-	private final Integer limit;
+	private final String skip;
+	private final String limit;
 
 	
 	MongoDBOFind(String query,
 				 String sort,
 				 String projection,
-				 Integer skip,
-				 Integer limit) {
+				 String skip,
+				 String limit) {
 
 		this.query = query;
 		this.sort = sort;
@@ -80,8 +80,8 @@ public class MongoDBOFind extends MongoDBO {
 		try {
 
 			// expand the the value of skip and limit parameters from the GVBuffer
-			querySkip = Integer.valueOf(PropertiesHandler.expand(Integer.toString(skip), gvBuffer));
-			queryLimit = Integer.valueOf(PropertiesHandler.expand(Integer.toString(limit), gvBuffer));
+			querySkip = Integer.valueOf(PropertiesHandler.expand(skip, gvBuffer));
+			queryLimit = Integer.valueOf(PropertiesHandler.expand(limit, gvBuffer));
 
 		} catch (NumberFormatException e) {
 
