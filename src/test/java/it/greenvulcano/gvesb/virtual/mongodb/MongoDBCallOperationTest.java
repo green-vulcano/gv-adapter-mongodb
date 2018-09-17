@@ -101,6 +101,7 @@ public class MongoDBCallOperationTest {
 		GVBuffer inputGVBuffer = new GVBuffer();		
 		inputGVBuffer.setService("TEST");
 		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
+		inputGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputGVBuffer.setObject("test input");		
 		
 		GreenVulcano greenVulcano = new GreenVulcano();		
@@ -113,6 +114,15 @@ public class MongoDBCallOperationTest {
 					         .mapToObj(result::getJSONObject)
 					         .map(measure-> measure.getJSONObject("sensor").getString("physicalId"))
 							 .allMatch("BATTERY"::equals));
+		
+		inputGVBuffer.setProperty("limit", "2");
+		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+		
+		assertNotNull(outputGVBuffer.getObject());
+		
+		result = new JSONArray(outputGVBuffer.getObject().toString());
+		
+		assertEquals(2, result.length());
 	}
 
 	@Test
@@ -146,6 +156,7 @@ public class MongoDBCallOperationTest {
 		GVBuffer inputFindGVBuffer = new GVBuffer();
 		inputFindGVBuffer.setService("TEST");
 		inputFindGVBuffer.setProperty("FILTER", "{\"_id\": { $oid:\"" + insertedDocumentId + "\" } }");
+		inputFindGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputFindGVBuffer.setObject("test input");
 
 		GVBuffer outputFindGVBuffer = greenVulcano.forward(inputFindGVBuffer, "testFind");
@@ -186,6 +197,7 @@ public class MongoDBCallOperationTest {
 		GVBuffer inputFindGVBuffer = new GVBuffer();
 		inputFindGVBuffer.setService("TEST");
 		inputFindGVBuffer.setProperty("FILTER", "{ \"$or\": [ { \"fakePhysicalId\": \"BATTERY\" }, { \"fakePhysicalId\": \"GPS\" } ] }");
+		inputFindGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputFindGVBuffer.setObject("test input");
 
 		GVBuffer outputFindGVBuffer = greenVulcano.forward(inputFindGVBuffer, "testFind");
@@ -220,6 +232,7 @@ public class MongoDBCallOperationTest {
 		inputGVBuffer = new GVBuffer();
 		inputGVBuffer.setService("TEST");
 		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
+		inputGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputGVBuffer.setObject("test input");
 
 		greenVulcano = new GreenVulcano();
@@ -264,6 +277,7 @@ public class MongoDBCallOperationTest {
 		GVBuffer inputFind1GVBuffer = new GVBuffer();
 		inputFind1GVBuffer.setService("TEST");
 		inputFind1GVBuffer.setProperty("FILTER", "{\"_id\": { $oid:\"" + insertedDocumentId + "\" } }");
+		inputFind1GVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputFind1GVBuffer.setObject("test input");
 
 		GVBuffer outputFind1GVBuffer = greenVulcano.forward(inputFind1GVBuffer, "testFind");
@@ -301,6 +315,7 @@ public class MongoDBCallOperationTest {
 		GVBuffer inputFind2GVBuffer = new GVBuffer();
 		inputFind2GVBuffer.setService("TEST");
 		inputFind2GVBuffer.setProperty("FILTER", "{\"_id\": { $oid:\"" + insertedDocumentId + "\" } }");
+		inputFind2GVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputFind2GVBuffer.setObject("test input");
 
 		GVBuffer outputFind2GVBuffer = greenVulcano.forward(inputFind2GVBuffer, "testFind");
@@ -339,6 +354,7 @@ public class MongoDBCallOperationTest {
 		GVBuffer inputFind1GVBuffer = new GVBuffer();
 		inputFind1GVBuffer.setService("TEST");
 		inputFind1GVBuffer.setProperty("FILTER", "{ \"$or\": [ { \"fakePhysicalId\": \"BATTERY\" }, { \"fakePhysicalId\": \"GPS\" } ] }");
+		inputFind1GVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputFind1GVBuffer.setObject("test input");
 
 		GVBuffer outputFind1GVBuffer = greenVulcano.forward(inputFind1GVBuffer, "testFind");
@@ -375,6 +391,7 @@ public class MongoDBCallOperationTest {
 		GVBuffer inputFind2GVBuffer = new GVBuffer();
 		inputFind2GVBuffer.setService("TEST");
 		inputFind2GVBuffer.setProperty("FILTER", "{ \"$or\": [ { \"fakePhysicalId\": \"BATTERY\" }, { \"fakePhysicalId\": \"GPS\" } ] }");
+		inputFind2GVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
 		inputFind2GVBuffer.setObject("test input");
 
 		GVBuffer outputFind2GVBuffer = greenVulcano.forward(inputFind2GVBuffer, "testFind");
