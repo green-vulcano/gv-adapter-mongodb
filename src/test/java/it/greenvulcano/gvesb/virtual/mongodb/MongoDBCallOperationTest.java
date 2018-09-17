@@ -1,6 +1,8 @@
 package it.greenvulcano.gvesb.virtual.mongodb;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
+import com.mongodb.util.JSON;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -18,11 +20,7 @@ import it.greenvulcano.gvesb.virtual.OperationFactory;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +100,6 @@ public class MongoDBCallOperationTest {
 		inputGVBuffer.setService("TEST");
 		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
 		inputGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
-		inputGVBuffer.setObject("test input");		
 		
 		GreenVulcano greenVulcano = new GreenVulcano();		
 		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
@@ -123,6 +120,67 @@ public class MongoDBCallOperationTest {
 		result = new JSONArray(outputGVBuffer.getObject().toString());
 		
 		assertEquals(2, result.length());
+
+	}
+
+	@Test
+	public void testProjection() throws GVException {
+
+	}
+
+	@Test
+	public void testSort() throws GVException {
+
+		/*GVBuffer inputGVBuffer = new GVBuffer();
+		inputGVBuffer.setService("TEST");
+		inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
+		inputGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
+
+		GreenVulcano greenVulcano = new GreenVulcano();
+		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		JSONArray result = new JSONArray(outputGVBuffer.getObject().toString());
+		assertTrue(IntStream.range(0, result.length())
+				.mapToObj(result::getJSONObject)
+				.map(measure-> measure.getJSONObject("sensor").getString("physicalId"))
+				.allMatch("BATTERY"::equals));
+
+		inputGVBuffer.setProperty("limit", "2");
+		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		result = new JSONArray(outputGVBuffer.getObject().toString());
+
+		assertEquals(2, result.length());*/
+
+	}
+
+	@Test
+	public void testSkipLimit() throws GVException {
+
+		GVBuffer inputGVBuffer = new GVBuffer();
+		inputGVBuffer.setService("TEST");
+		inputGVBuffer.setProperty("FILTER", "{}");
+		inputGVBuffer.setProperty("SORT", "{}");
+		inputGVBuffer.setProperty("offset", "4");/*
+		inputGVBuffer.setProperty("limit", "4");*/
+
+		GreenVulcano greenVulcano = new GreenVulcano();
+		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		BasicDBList resultBSON = (BasicDBList) JSON.parse(outputGVBuffer.getObject().toString());
+
+		assertNotNull(resultBSON);
+
+		assertEquals(1, resultBSON.size());
+
+
+
 	}
 
 	@Test
