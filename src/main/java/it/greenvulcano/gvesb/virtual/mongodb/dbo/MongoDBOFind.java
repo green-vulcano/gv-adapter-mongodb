@@ -98,11 +98,11 @@ public class MongoDBOFind extends MongoDBO {
 		Document sortDocument = Document.parse(querySort);
 		Document projectionDocument = Document.parse(queryProjection);
     	
-    	logger.debug("Executing DBO Find: " + queryCommand
-				+ "; sort " + querySort
-				+ "; projection " + queryProjection
-				+ "; skip " + querySkip
-				+ "; limit " + queryLimit);
+    	logger.debug("Executing DBO Find: {}"
+				+ "; sort {}"
+				+ "; projection {}"
+				+ "; skip {}"
+				+ "; limit {}",queryCommand, querySort, queryProjection, querySkip, queryLimit);
 		
 		MongoCursor<String> resultSet = mongoCollection
 				.find(commandDocument)
@@ -129,7 +129,7 @@ public class MongoDBOFind extends MongoDBO {
 		jsonResult.append("]");
 
 		gvBuffer.setProperty("REC_READ", Integer.toString(count));
-        gvBuffer.setObject(jsonResult);
+        gvBuffer.setObject(jsonResult.toString());
 		
 	}	
 

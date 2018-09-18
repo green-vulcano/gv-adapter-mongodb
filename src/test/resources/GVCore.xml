@@ -162,6 +162,13 @@
                              <statement>@{{STATEMENT}}</statement>
                           </update>
                     </mongodb-call>
+                    
+                    <mongodb-call name="testMongoDBCallAggregate" database="gviot" collection="measures_1" type="call">
+                          <aggregate>
+                             <stage>@{{FILTER}}</stage>
+                             <stage>@{{STATEMENT}}</stage>
+                          </aggregate>
+                    </mongodb-call>
 
                     <mongodb-call name="testMongoDBCallDelete" database="gviot" collection="measures_1" type="call">
                         <delete></delete>
