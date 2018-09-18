@@ -36,5 +36,9 @@
 
 <!ELEMENT delete (EMPTY)>
 
+<!ELEMENT aggregate (stage+)>
+<!ELEMENT stage (#PCDATA)>
+
+
 <!-- Omitting definition of element statement because is already defined in GVCore dtds 
 <!ELEMENT statement (#PCDATA)> -->
