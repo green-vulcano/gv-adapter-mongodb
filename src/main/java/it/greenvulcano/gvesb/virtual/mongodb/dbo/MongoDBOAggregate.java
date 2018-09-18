@@ -72,10 +72,9 @@ public class MongoDBOAggregate extends MongoDBO {
 				stagesBson.add(Document.parse(statement));
 			} catch (Exception e) {
 				
-				String exceptionMessage = "Error adding stage to aggregation:" + e.getCause();
-				logger.error(exceptionMessage);
+				logger.error("Error adding stage to aggregation", e);
 
-				throw new GVException(exceptionMessage);
+				throw new GVException("Error adding stage to aggregation" + e.getClass().getName());
 
 			}
 		}

@@ -1,8 +1,6 @@
 package it.greenvulcano.gvesb.virtual.mongodb;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
-import com.mongodb.util.JSON;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -518,8 +516,6 @@ public class MongoDBCallOperationTest {
 	@Test
 	public void testDeleteMany() throws GVException {
 
-
-
 		// CREATE a BATTERY record and a GPS record
 
 		GVBuffer inputCreateGVBuffer = new GVBuffer();
@@ -589,6 +585,26 @@ public class MongoDBCallOperationTest {
 		JSONArray find2Result = new JSONArray(outputFind2GVBuffer.getObject().toString());
 		assertEquals(0, find2Result.length());
 
+	}
+	
+	@Test
+	public void testAggregate() throws GVException {
+		
+		GVBuffer inputGVBuffer = new GVBuffer();		
+		inputGVBuffer.setService("TEST");
+		inputGVBuffer.setProperty("FILTER", "{$match : {\"sensor.device.physicalId\": { $eq:\"AA0011223344\" } }}");
+		inputGVBuffer.setProperty("STATEMENT", "{ $group: {_id: \"$sensor.device.physicalId\", \"readings\" : {$sum: 1 } } }");
+		
+		GreenVulcano greenVulcano = new GreenVulcano();
+		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testAggregation");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		JSONArray result = new JSONArray(outputGVBuffer.getObject().toString());
+		
+		assertEquals(1, result.length());		
+		assertEquals(4, result.getJSONObject(0).getInt("readings"));
+		
 	}
 
 	@AfterClass

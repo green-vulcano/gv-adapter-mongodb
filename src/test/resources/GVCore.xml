@@ -133,6 +133,24 @@
                                    point-x="391" point-y="150" type="flow-node"/>
                     </Flow>
                 </Operation>
+                <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
+                           name="testAggregation" operation-activation="on"
+                           type="operation">
+
+                    <Flow first-node="invokeCallOperation">
+
+                        <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                         id="invokeCallOperation" id-channel="TestChannel"
+                                         id-system="TestSystem" input="inGVBuffer"
+                                         next-node-id="done" op-type="call"  dump-in-out="true"
+                                         operation-name="testMongoDBCallAggregate" output="outGVBuffer"
+                                         type="flow-node"/>
+
+                        <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                                   id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
+                                   point-x="391" point-y="150" type="flow-node"/>
+                    </Flow>
+                </Operation>
             </Service>
         </Services>
     </GVServices>
