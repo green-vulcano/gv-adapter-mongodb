@@ -148,7 +148,7 @@
                           <find offset="@{{offset::0}}" limit="@{{limit::128}}">
                             <query>@{{FILTER}}</query>
                             <sort>@{{SORT}}</sort>
-                            <!--<projection>@{{PROJECTION}}</projection>-->
+                            <projection>@{{PROJECTION::{}}}</projection>
                           </find>
                     </mongodb-call>
 
