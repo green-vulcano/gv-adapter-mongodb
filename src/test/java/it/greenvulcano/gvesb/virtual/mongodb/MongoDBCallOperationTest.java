@@ -30,7 +30,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -155,21 +157,159 @@ public class MongoDBCallOperationTest {
 		inputGVBuffer.setService("TEST");
 		inputGVBuffer.setProperty("FILTER", "{}");
 		inputGVBuffer.setProperty("SORT", "{}");
-		inputGVBuffer.setProperty("offset", "4");/*
-		inputGVBuffer.setProperty("limit", "4");*/
+		inputGVBuffer.setProperty("offset", "4");
 
 		GreenVulcano greenVulcano = new GreenVulcano();
 		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
 
 		assertNotNull(outputGVBuffer.getObject());
 
-		BasicDBList resultBSON = (BasicDBList) JSON.parse(outputGVBuffer.getObject().toString());
+		JSONArray resultJSON = new JSONArray(outputGVBuffer.getObject().toString());
 
-		assertNotNull(resultBSON);
+		assertNotNull(resultJSON);
 
-		assertEquals(1, resultBSON.size());
+		assertEquals(1, resultJSON.length());
 
 
+
+		inputGVBuffer.setProperty("offset", "0");
+		inputGVBuffer.setProperty("limit", "5");
+
+		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		resultJSON = new JSONArray(outputGVBuffer.getObject().toString());
+
+		assertNotNull(resultJSON);
+
+		assertEquals(5, resultJSON.length());
+
+
+
+		inputGVBuffer.setProperty("offset", "3");
+		inputGVBuffer.setProperty("limit", "1");
+
+		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		resultJSON = new JSONArray(outputGVBuffer.getObject().toString());
+
+		assertNotNull(resultJSON);
+
+		assertEquals(1, resultJSON.length());
+
+
+
+		inputGVBuffer.setProperty("offset", "4");
+		inputGVBuffer.setProperty("limit", "5");
+
+		outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		resultJSON = new JSONArray(outputGVBuffer.getObject().toString());
+
+		assertNotNull(resultJSON);
+
+		assertEquals(1, resultJSON.length());
+
+	}
+
+	@Test
+	public void testProjectionWhitelist() throws GVException {
+
+		GVBuffer inputGVBuffer = new GVBuffer();
+		inputGVBuffer.setService("TEST");
+		inputGVBuffer.setProperty("FILTER", "{}");
+		inputGVBuffer.setProperty("SORT", "{}");
+		inputGVBuffer.setProperty("PROJECTION", "{ \"sensor.device.physicalId\" : 1 }");
+
+		GreenVulcano greenVulcano = new GreenVulcano();
+		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		JSONArray resultJSON = new JSONArray(outputGVBuffer.getObject().toString());
+
+		assertNotNull(resultJSON);
+
+		assertEquals(5, resultJSON.length());
+
+		Set<String> expectedRootKeySet = new HashSet<>();
+		expectedRootKeySet.add("_id");
+		expectedRootKeySet.add("sensor");
+
+		Set<String> expectedSensorKeySet = new HashSet<>();
+		expectedSensorKeySet.add("device");
+
+		Set<String> expectedDeviceKeySet = new HashSet<>();
+		expectedDeviceKeySet.add("physicalId");
+
+		for (int i = 0; i < resultJSON.length(); i++) {
+
+			JSONObject element = resultJSON.getJSONObject(i);
+
+			assertEquals(element.keySet(), expectedRootKeySet);
+
+			JSONObject sensor = element.getJSONObject("sensor");
+
+			assertEquals(sensor.keySet(), expectedSensorKeySet);
+
+			JSONObject device = sensor.getJSONObject("device");
+
+			assertEquals(device.keySet(), expectedDeviceKeySet);
+
+		}
+
+	}
+
+	@Test
+	public void testProjectionBlacklist() throws GVException {
+
+		GVBuffer inputGVBuffer = new GVBuffer();
+		inputGVBuffer.setService("TEST");
+		inputGVBuffer.setProperty("FILTER", "{}");
+		inputGVBuffer.setProperty("SORT", "{}");
+		inputGVBuffer.setProperty("PROJECTION", "{ \"sensor.device.physicalId\" : 0, \"sensor.physicalId\": 0, \"type\": 0 }");
+
+		GreenVulcano greenVulcano = new GreenVulcano();
+		GVBuffer outputGVBuffer = greenVulcano.forward(inputGVBuffer, "testFind");
+
+		assertNotNull(outputGVBuffer.getObject());
+
+		JSONArray resultJSON = new JSONArray(outputGVBuffer.getObject().toString());
+
+		assertNotNull(resultJSON);
+
+		assertEquals(5, resultJSON.length());
+
+		Set<String> expectedRootKeySet = new HashSet<>();
+		expectedRootKeySet.add("_id");
+		expectedRootKeySet.add("sensor");
+
+		Set<String> expectedSensorKeySet = new HashSet<>();
+		expectedSensorKeySet.add("device");
+
+		Set<String> expectedDeviceKeySet = new HashSet<>();
+		expectedDeviceKeySet.add("physicalId");
+
+		for (int i = 0; i < resultJSON.length(); i++) {
+
+			JSONObject element = resultJSON.getJSONObject(i);
+
+			assertFalse(element.keySet().contains("type"));
+
+			JSONObject sensor = element.getJSONObject("sensor");
+
+			assertFalse(sensor.keySet().contains("physicalId"));
+
+			JSONObject device = sensor.getJSONObject("device");
+
+			assertFalse(device.keySet().contains("physicalId"));
+
+		}
 
 	}
 
