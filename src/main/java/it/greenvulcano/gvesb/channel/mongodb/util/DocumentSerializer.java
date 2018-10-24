@@ -10,7 +10,12 @@ import java.io.IOException;
 
 public class DocumentSerializer extends StdSerializer<Document> {
 
-    public DocumentSerializer() { this(null); }
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3037320554273960620L;
+
+	public DocumentSerializer() { this(null); }
 
     public DocumentSerializer(Class<Document> aClass) { super(aClass); }
 
