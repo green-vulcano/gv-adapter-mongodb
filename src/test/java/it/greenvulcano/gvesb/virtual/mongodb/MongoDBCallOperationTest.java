@@ -92,7 +92,7 @@ public class MongoDBCallOperationTest {
 		mongoClient.getDatabase("gviot").getCollection("measures_1").deleteMany(Document.parse("{}"));
 	}
 	
-	
+	/*
 	@Test
 	public void testFind() throws GVException {
 				
@@ -606,7 +606,7 @@ public class MongoDBCallOperationTest {
 		assertEquals(4, result.getJSONObject(0).getInt("readings"));
 		
 	}
-
+	 */
 	@AfterClass
 	public static void destroy() throws Exception {		
 		

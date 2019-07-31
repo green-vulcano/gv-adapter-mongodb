@@ -14350,24 +14350,12 @@
     
     #NotNull
 -->
-<!ELEMENT find (Description?,query,sort?,projection?)>
+<!ELEMENT find (Description?,query)>
 <!--
     The offset for data results pagination.
     Can contain placeholder to be decoded at runtime.
 
     #NotNull
--->
-<!ATTLIST find offset CDATA #IMPLIED>
-<!--
-    The limit for data results pagination, the numbero of records shown per page.
-    Can contain placeholder to be decoded at runtime.
-
-    #NotNull
--->
-<!ATTLIST find limit CDATA #IMPLIED>
-<!--
-    The MongoDB find query in JSON format.
-    Can contain placeholder to be decoded at runtime.
 -->
 <!ELEMENT query (#PCDATA)>
 <!--
@@ -14383,15 +14371,6 @@
         "age": -1
     }
       
-    Can contain placeholder to be decoded at runtime.
--->
-<!ELEMENT sort (#PCDATA)>
-<!--
-	The MongoDB data projection expressed in JSON.
--->
-<!ELEMENT projection (#PCDATA)>
-<!--
-    The MongoDB insert data in JSON format.
     Can contain placeholder to be decoded at runtime.
 -->
 <!ELEMENT insert (#PCDATA)>
