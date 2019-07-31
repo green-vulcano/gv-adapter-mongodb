@@ -1,4 +1,4 @@
-# GreenVulcano VCL Adapter for MongoDB
+# GreenVulcano Adapter for MongoDB v2.0
 
 This is the implementation of a GreenVulcano VCL adapter for the MongoDB database engine. It is meant to be run as an Apache Karaf bundle.
 
