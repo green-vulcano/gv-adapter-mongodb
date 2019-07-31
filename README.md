@@ -28,7 +28,7 @@ Then, you need to have installed Apache Maven (3.5.4 or higher) and Apache Karaf
     - [Download](http://www.apache.org/dyn/closer.lua/karaf/4.2.6/apache-karaf-4.2.6.tar.gz)
     - Installation steps: simply extract the Apache Karaf directory in any path you want. Verify that the Apache Karaf installation is operational by running the executable ```./bin/karaf``` from the Apache Karaf root directory (a Karaf shell should be displayed).
 
-Next, you need to install the GreenVulcano engine on the Apache Karaf container. Please refer to [this link](https://github.com/cs91chris/gv-engine/blob/master/quickstart-guide.md) for further reference.
+Next, you need to install the GreenVulcano engine on the Apache Karaf container. Please refer to [this link](https://github.com/kylan11/gv-engine/blob/master/quickstart-guide.md) for further reference.
 
 In order to install the bundle in Apache Karaf to use it for a GreenVulcano application project, you need to install its dependencies. Open the Apache Karaf terminal by running the Karaf executable and type the following command:
 
@@ -65,7 +65,7 @@ Then, you need to install the VCL adapter bundle itself in Apache Karaf.
 Clone or download this repository on your computer, and then run ```mvn install``` in its root folder:
 
 ```shell
-git clone https://github.com/green-vulcano/gv-adapter-mongodb
+git clone https://github.com/kylan11/gv-adapter-mongodb
 cd gv-adapter-mongodb
 mvn install
 ```
@@ -83,7 +83,7 @@ karaf@root()> bundle:install -l 81 mvn:it.greenvulcano.gvesb.adapter/gvvcl-mongo
 Bundle ID: x
 ```
 
-Make sure that the bundle ```GreenVulcano ESB VCL interface for MongoDB``` appears in the ```list``` of installed bundles in ```Installed``` status and with bundle level (```Lvl```) equal to ```81``` (or at least strictly higher than ```80```).  
+Make sure that the bundle ```GreenVulcano ESB MongoDB Adapter v2.0``` appears in the ```list``` of installed bundles in ```Installed``` status and with bundle level (```Lvl```) equal to ```81``` (or at least strictly higher than ```80```).  
 Then, use its ID to put the bundle in ```Active``` status by executing the following command:
 
 ```shell
@@ -108,9 +108,9 @@ Insert the ```<mongodb-call>``` and ```<mongodb-list-collections-call>``` XML no
 <System id-system="mongodb">
     <Channel id-channel="mongodb_db1" enabled="true" endpoint="xmlp{{db_host_port}}"
         type="MongoDBAdapter">
-        <mongodb-query-call type="call" name="query" database="xmlp{{db_name}}" collection="json{{collection}}">
-            <query><![CDATA[json{{query}}]]></query>
-        </mongodb-query-call>
+        <mongodb-call type="call" name="query" database="xmlp{{db_name}}" collection="xmlp{{db_collection}}">
+            <query><![CDATA[@{{QUERY}}]]></query>
+        </mongodb-call>
         <mongodb-list-collections-call type="call" name="list-collections" database="xmlp{{db_name}">
         </mongodb-list-collections-call>
     </Channel>
@@ -126,7 +126,7 @@ Some constraints apply to these XML nodes.
     - ```name``` must be declared: it defines the name of the Operation node;
     - ```database``` must be declared: it defines the name of the MongoDB database to query;
     - ```collection``` must be declared: it defines the name of the MongoDB collection of the specified database to query;
-    - the ```<query>``` element must contain the query to perform against the specified database and collection; it must comply the MongoDB query syntax.
+    - the ```<query>``` element must contain the query to perform against the specified database and collection. Since version 2.0, queries are passed as native JSON strings. More on that later;
 - The ```<mongodb-list-collections-call>``` XML node must comply with the following syntax:
     - ```type``` must be declared and set equal to ```"call"```;
     - ```name``` must be declared: it defines the name of the Operation node;
@@ -143,8 +143,8 @@ Let's recall the System-Channel-Operation nodes previously defined:
 <System id-system="mongodb">
     <Channel id-channel="mongodb_db1" enabled="true" endpoint="xmlp{{db_host_port}}"
         type="MongoDBAdapter">
-        <mongodb-call type="call" name="query" database="xmlp{{db_name}}" collection="json{{collection}}">
-            <query><![CDATA[json{{query}}]]></query>
+        <mongodb-call type="call" name="query" database="xmlp{{db_name}}" collection="xmlp{{db_collection}}">
+            <query><![CDATA[@{{QUERY}}]]></query>
         </mongodb-call>
         <mongodb-list-collections-call type="call" name="list-collections" database="xmlp{{db_name}">
         </mongodb-list-collections-call>
@@ -203,29 +203,14 @@ Once the application properties are correctly set, it is possible to run the Ser
 You can test these Services selecting them in the Execute section of the GreenVulcano dashboard:
 
 - **List Collections**: no input Body is needed; after a successful execution, the output window will display the list of the collections defined in the MongoDB database referred by the application properties;
-- **Query**: a JSON representing the query to perform against the MongoDB is required; such JSON must have the following structure:
-
-    ```json
-    {
-        "collection": "<the name of the collection to query - it must be inside the declared database>",
-        "query": "<the query to perform against the specified collection - it must comomply with the MongoDB query syntax>"
-    }
-    ```
-
-**N.B.**: since the MongoDB query has a JSON format, the \" symbols must be escaped (with \\ symbol) in the JSON sent to the GreenVulcano application. Example:
-
-```json
-{
-    "collection": "measures_1",
-    "query": "{\"sensor.physicalId\": { $eq: \"GPS\" } }"
-}
+- **Query**: since version 2.0, queries are passed as native JSON strings. The strings' syntax has to comply with the one you'd use to perform a query on the MongoDB shell. For instance, if I needed to perform a find query on a collection 'test' full of employers, and I only wanted printed those named 'Paul', I'd write:
+```sh
+db.employee.find({"name": "Paul"})
 ```
-
-Notice the escaped \" symbols.
+In this case, my string will be {"name": "Paul"} as input. Also, there is no need to worry about " characters, since the string will be passed as such without the need to use the escape sequence "\".  
 
 ### Creating services through GreenVulcano's Developer Studio
 
 In order to include the new features of MongoDB with Developer Studio, you will have to download the "dtds" folder from this repository and replace it with the already present default dtds folder in your current project. You will have to do that for each project in which you need to perform MongoDB operations.
 
 # Fully automatic installer coming soon!
-
