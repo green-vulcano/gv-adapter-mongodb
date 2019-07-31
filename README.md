@@ -207,7 +207,9 @@ You can test these Services selecting them in the Execute section of the GreenVu
 ```sh
 db.employee.find({"name": "Paul"})
 ```
-In this case, my string will be {"name": "Paul"} as input. Also, there is no need to worry about " characters, since the string will be passed as such without the need to use the escape sequence "\".  
+In this case, my string will be {"name": "Paul"} as input. To see how this simple System mongodb-call operation would look like in Developer Studio, [here's a screenshot](https://i.imgur.com/HMou2Yr.png)
+
+Also, don't worry about **"** characters, since they won't be parsed as control structures. The whole string will be passed as such removing the hassle of having to use escape sequence **\\** for every double quote.
 
 ### Creating services through GreenVulcano's Developer Studio
 
