@@ -1,5 +1,6 @@
 package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import it.greenvulcano.configuration.XMLConfig;
@@ -93,25 +94,30 @@ public class MongoDBOFind extends MongoDBO {
 			throw new GVException(exceptionMessage);
 
 		}
-
+		/*	Don't need this. Will pass query natively as string
 		Document commandDocument = Document.parse(queryCommand);
 		Document sortDocument = Document.parse(querySort);
 		Document projectionDocument = Document.parse(queryProjection);
-    	
+    	*/
     	logger.debug("Executing DBO Find: {}"
 				+ "; sort {}"
 				+ "; projection {}"
 				+ "; skip {}"
 				+ "; limit {}",queryCommand, querySort, queryProjection, querySkip, queryLimit);
 		
-		MongoCursor<String> resultSet = mongoCollection
+		/*MongoCursor<String> resultSet = mongoCollection
 				.find(commandDocument)
 				.projection(projectionDocument)
 				.sort(sortDocument)
 				.skip(querySkip)
 				.limit(queryLimit)
 				.map(Document::toJson).iterator();
-		
+		*/
+    	
+    	// The following workaround parses the string as json so you can make queries natively.
+    	BasicDBObject query = BasicDBObject.parse(queryCommand);
+    	MongoCursor<String> resultSet = mongoCollection
+    			.find(query).map(Document::toJson).iterator();
 		StringBuilder jsonResult = new StringBuilder("[");
 		
 		int count = 0;

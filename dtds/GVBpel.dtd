@@ -1,0 +1,118 @@
+<!ENTITY % gvdh SYSTEM "http://www.greenvulcano.com/gvesb/dtds/GVDataHandler.dtd">
+%gvdh;
+
+
+<!ELEMENT BpelEngineConfiguration (Description?,EngineProperties+)>
+<!--
+    Defines parameter configuration for Bpel process.
+
+    #Icon: default.png
+-->
+<!ATTLIST BpelEngineConfiguration deployMentUnitProcess CDATA #REQUIRED>
+
+<!--
+    Start Engine Bpel.
+-->
+<!ATTLIST BpelEngineConfiguration startServer (true|false) #REQUIRED>
+<!--
+    Timeout Transaction.
+    #NotNull
+-->
+<!ATTLIST BpelEngineConfiguration transactionTimeout CDATA #REQUIRED>
+
+<!--
+    Bpel Engine properties.
+
+    #Label: concat(@name,'=',@value)
+-->
+<!ELEMENT EngineProperties (Description?)>
+<!--
+    Property name.
+
+    #NotNull
+    #Unique: ../EngineProperties/@name
+-->
+<!ATTLIST EngineProperties name CDATA #REQUIRED>
+<!--
+    Property value.
+-->
+<!ATTLIST EngineProperties value CDATA #REQUIRED>
+
+<!--
+    Defines an operational workflow of GreenVulcanoESB.
+    Each workflow is identified by a couple <service,operation> and is made
+    instantiating a 'Flow', with Bpel operations
+
+    The Forward workflows are driven by the internal mechanisms of GreenVulcanoESB to complete
+    transactions that do not require assistance from external systems
+
+    You can enable some consistency check on the data passed on
+    GreenVulcanoESB.
+
+    Using the sub-element 'Conditions' can be (re)defined the conditions
+    for possible use in the workflow routing.
+
+    #SortChild
+    #SelectOnInsert
+    #Label: @name
+    #Icon: operation.png
+-->
+<!ELEMENT BpelOperation   (Description?,BpelFlow)>
+<!--
+    Unmodifiable.
+    Used by GreenVulcanoESB factory framework.
+-->
+<!ATTLIST BpelOperation   type              CDATA #FIXED "operation">
+<!--
+    Unmodifiable.
+    Used by GreenVulcanoESB factory framework.
+-->
+<!ATTLIST BpelOperation   class             CDATA #FIXED "it.greenvulcano.gvesb.core.bpel.GVFlowODE">
+<!--
+    BpelOperation's name.
+
+    #Unique: ../*/@name
+-->
+<!ATTLIST BpelOperation   name              CDATA #REQUIRED>
+<!--
+    Enable a consistency check of GVBuffer.
+
+    It can take three values:
+
+    - none: does not make any check.
+
+    - sys-svc: fields 'system' and 'service' the result should take the
+        taking the same values in the input buffer.
+
+    - sys-svc-id: fields 'system', 'service' and 'id' of the result must
+        assume the same values that assumed in the input buffer.
+        This setting should not be used in transactions with semantics
+        'GetRequest'.
+-->
+<!ATTLIST BpelOperation   out-check-type    (none|sys-svc|sys-svc-id) #REQUIRED>
+<!--
+    Activation status of the current service operation.
+
+    The state can take two values:
+    - on: the operation is active.
+    - off: the operation is not active.
+-->
+<!ATTLIST BpelOperation operation-activation (on|off) "on">
+<!--
+    Defines the master logger Level for the BpelOperation.
+    Default to ALL.
+-->
+<!ATTLIST BpelOperation loggerLevel (ALL|DEBUG|INFO|WARN|ERROR) #IMPLIED>
+
+<!--
+    Defines a GreenVulcanoESB Bpel workflow.
+-->
+<!ELEMENT BpelFlow   (Description?)>
+<!--
+    Bpel operation namespace.
+-->
+<!ATTLIST BpelFlow namespace CDATA #REQUIRED>
+<!--
+    Bpel process name.
+-->
+<!ATTLIST BpelFlow processname CDATA #REQUIRED>

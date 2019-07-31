@@ -1,0 +1,97 @@
+<!ENTITY % gvhttp SYSTEM "http://www.greenvulcano.com/gvesb/dtds/GVHTTPInbound.dtd">
+%gvhttp;
+
+<!--
+    VCL plugin to publish a MQTT message to brokers.
+
+    #Label: @name
+    #Icon: GVMqttPublishCall.png
+    #Category: Custom
+    #SelectOnInsert
+    #Template:
+
+        <xsl:template match="mqtt-publish-call">
+                <xsl:if test="Description">
+                <small><xsl:value-of select="Description"/></small><p/>
+            </xsl:if>
+        </xsl:template>
+-->
+<!ELEMENT mqtt-publish-call (Description?)>
+
+<!--
+    Operation name.
+    Used in the 'Flow' section to associate workflow nodes to VCL operations.
+
+    #NotNull
+    #Unique: ../*[@type='enqueue' or @type='dequeue' or @type='call']/@name
+-->
+<!ATTLIST mqtt-publish-call name CDATA #REQUIRED>
+
+<!--
+    Unmodifiable.
+    Used by GreenVulcanoESB factory framework.
+-->
+<!ATTLIST mqtt-publish-call type CDATA #FIXED "call">
+
+<!--
+    Topic on wich post messages.
+    Overrides the publisher default topic.
+    Can contain metadata to be resolved at runtime.
+
+    #NotNull
+-->
+<!ATTLIST mqtt-publish-call topic CDATA #REQUIRED>
+
+<!--
+    VCL plugin to subscribe a MQTT listener to brokers.
+
+    #Label: @name
+    #Icon: GVMqttSubscribeListener.png
+    #Category: Custom
+    #SelectOnInsert
+    #Template:
+
+        <xsl:template match="mqtt-subscribe-listener">
+                <xsl:if test="Description">
+                <small><xsl:value-of select="Description"/></small><p/>
+            </xsl:if>
+        </xsl:template>
+-->
+<!ELEMENT mqtt-subscribe-listener (Description?)>
+
+<!--
+    Operation name.
+    Used in the 'Flow' section to associate workflow nodes to VCL operations.
+
+    #NotNull
+    #Unique: ../*[@type='enqueue' or @type='dequeue' or @type='call']/@name
+-->
+<!ATTLIST mqtt-subscribe-listener name CDATA #REQUIRED>
+
+<!--
+    Unmodifiable.
+    Used by GreenVulcanoESB factory framework.
+-->
+<!ATTLIST mqtt-subscribe-listener type CDATA #FIXED "listener">
+
+<!--
+    QoS used.
+    Can contain metadata to be resolved at runtime.
+
+    #NotNull
+-->
+<!ATTLIST mqtt-subscribe-listener qos CDATA #REQUIRED>
+
+<!--
+    ID service with which to perform the invocation of GreenVulcano ESB.
+
+    #References: /GVCore/GVServices/Services/Service/@id-service
+-->
+<!ATTLIST mqtt-subscribe-listener gv-service CDATA #REQUIRED>
+
+<!--
+     GreenVulcano ESB operation to invoke.
+
+    #References: /GVCore/GVServices/Services/Service[@id-service=current()/@gv-service]/*/@name
+-->
+<!ATTLIST mqtt-subscribe-listener gv-operation CDATA #REQUIRED>

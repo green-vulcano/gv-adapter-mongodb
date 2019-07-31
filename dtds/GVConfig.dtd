@@ -1,0 +1,375 @@
+
+<!--
+    Configuration file for GreenVulcanoESB core modules.
+-->
+<!ELEMENT GVConfig (GVCryptoHelper?,GVPoolManager?,GVPolicy?,GVConcurrencyHandler?)>
+
+
+<!--
+    Manages the configuration of key store and keys used by GreenVulcanoESB cypher framework.
+
+    #SortChild
+-->
+<!ELEMENT GVCryptoHelper (Description?, KeyStoreID*, KeyID*)>
+<!--
+    Element type 'module'.
+-->
+<!ATTLIST GVCryptoHelper type    CDATA   #FIXED  "module">
+<!--
+    Module ID always set to 'CRYPTO_HELPER'.
+-->
+<!ATTLIST GVCryptoHelper name    CDATA   #FIXED  "CRYPTO_HELPER">
+<!-- 
+    Key store folder
+-->
+<!ATTLIST GVCryptoHelper key-store-folder CDATA #REQUIRED>
+
+
+<!--
+    Key store access information.
+
+    #Label: @id
+    #Unique: ../KeyStoreID/@id
+    #SelectOnInsert
+    #Icon: GVKeyStoreID.png
+-->
+<!ELEMENT KeyStoreID (Description)?>
+<!--
+    Key store identifier.
+
+    #NotNull
+-->
+<!ATTLIST KeyStoreID id CDATA #REQUIRED>
+<!--
+    The keystore type.
+    Default to JCEKS.
+-->
+<!ATTLIST KeyStoreID key-store-type (JKS|JCEKS|PKCS12) #IMPLIED>
+<!--
+    The keystore provider.
+    Default to SunJCE.
+-->
+<!ATTLIST KeyStoreID key-store-prv (SUN|SunJCE|BC) #IMPLIED>
+<!--
+    The keystore name.
+
+    #NotNull
+-->
+<!ATTLIST KeyStoreID key-store-name CDATA #REQUIRED>
+<!--
+    The keystore password.
+
+    #NotNull
+    #Encrypted
+-->
+<!ATTLIST KeyStoreID key-store-pwd CDATA #REQUIRED>
+
+<!--
+    Key access information.
+
+    #Label: @id
+    #Unique: ../KeyID/@id
+    #SelectOnInsert
+    #Icon: GVKeyID.png
+-->
+<!ELEMENT KeyID (Description)?>
+<!--
+    The Key identifier.
+
+    #NotNull
+-->
+<!ATTLIST KeyID id CDATA #REQUIRED>
+<!--
+    The Key type.
+-->
+<!ATTLIST KeyID key-type (3DES| DES | RSA) #REQUIRED>
+<!--
+    The keystore identifier.
+
+    #References: ../KeyStoreID/@id
+    #NotNull
+-->
+<!ATTLIST KeyID key-store-id CDATA #REQUIRED>
+<!--
+    The Key/Certificate alias.
+
+    #NotNull
+-->
+<!ATTLIST KeyID key-alias CDATA #REQUIRED>
+<!--
+    The Key password.
+
+    #NotNull
+    #Encrypted
+-->
+<!ATTLIST KeyID key-pwd CDATA #IMPLIED>
+
+
+<!--
+    Root element for configuring the Pool Manager of GreenVulcanoESB.
+
+    #SortChild
+-->
+<!ELEMENT GVPoolManager (Description?, GreenVulcanoPool*)>
+<!--
+    Element type 'module'.
+-->
+<!ATTLIST GVPoolManager type    CDATA   #FIXED  "module">
+<!--
+    Module ID always set to 'POOL_MANAGER'.
+-->
+<!ATTLIST GVPoolManager name    CDATA   #FIXED  "POOL_MANAGER">
+
+<!--
+    Handle a pool of GreenVulcano Core instances, to be shared among the various
+    input adapter (EJB, MDB, WS).
+
+    #CompositeLabel: || @subsystem | / | @initial-size | / | @maximum-size | / | @maximum-creation
+    #Template:
+        <xsl:template match="GreenVulcanoPool">
+            <xsl:value-of select="Description"/>
+        </xsl:template>
+-->
+<!ELEMENT GreenVulcanoPool (Description?)>
+<!--
+    Subsystem using the pool.
+
+    #NotNull
+    #Unique: ../GreenVulcanoPool/@subsystem
+-->
+<!ATTLIST GreenVulcanoPool subsystem  CDATA   #REQUIRED>
+<!--
+    #Pattern: ! [0-9]* ! set a integer value > 0
+-->
+<!ATTLIST GreenVulcanoPool initial-size  CDATA   #REQUIRED>
+<!--
+    Maximum pool size.
+    The default is 10 items.
+    A value of -1 equals not limited pool.
+
+    #Pattern: ! (-1)|([1-9][0-9]*) ! set -1 or an integer > 0
+    #Warn: {{self::GreenVulcanoPool[(@maximum-size > 0 ) and (@initial-size > @maximum-size)]}} initial-size > maximum-size
+-->
+<!ATTLIST GreenVulcanoPool maximum-size  CDATA   #REQUIRED>
+<!--
+    Maximum number of instances to create.
+    The default is 50 instances.
+    A value of -1 is equivalent to unlimited number of creations.
+
+    #Pattern: ! (-1)|([1-9][0-9]*) ! set -1 or an integer > 0
+    #Warn: {{self::GreenVulcanoPool[(@maximum-creation > 0) and (@maximum-size > @maximum-creation)]}} maximum-size > maximum-creation
+-->
+<!ATTLIST GreenVulcanoPool maximum-creation  CDATA   #REQUIRED>
+<!--
+   Specifies the default timeout, in milliseconds, to obtain a GreenVulcano
+   Core instance.
+
+    #Pattern: ! [1-9][0-9]* ! set a integer value
+-->
+<!ATTLIST GreenVulcanoPool default-timeout  CDATA   #REQUIRED>
+<!--
+    Specifies the default timeout, in milliseconds, to activate the
+    mechanism of shrinking the pooled GreenVulcano Core instances.
+    The default is 15 minutes.
+    The value -1 disables resizing of the pool.
+
+    #Pattern: ! (-1)|([1-9][0-9]*) ! set -1 or an integer > 0
+-->
+<!ATTLIST GreenVulcanoPool shrink-timeout  CDATA   #IMPLIED>
+
+
+
+<!--
+    Defines subsystem's max concurrency on service invocation.
+
+    #SelectOnInsert
+-->
+<!ELEMENT GVConcurrencyHandler (Description?,SubSystems)>
+<!--
+    Element type 'module'.
+-->
+<!ATTLIST GVConcurrencyHandler type    CDATA   #FIXED  "module">
+<!--
+    Module ID always set to 'CONCURRENCY_HANDLER'.
+-->
+<!ATTLIST GVConcurrencyHandler name    CDATA   #FIXED  "CONCURRENCY_HANDLER">
+
+<!--
+    #SortChild
+-->
+<!ELEMENT SubSystems (SubSystem*)>
+
+<!--
+    #Label: @name
+    #SelectOnInsert
+    #SortChild
+-->
+<!ELEMENT SubSystem (Description?,ConcurrentService*)>
+
+<!--
+    Subsystem name.
+
+    #Unique: /GVCore/GVConcurrencyHandler/SubSystems/SubSystem/@name
+    #Choice: GVCore
+    #NotNull
+-->
+<!ATTLIST SubSystem name CDATA #REQUIRED>
+
+<!--
+    #CompositeLabel: || @service | :: | @system
+    #SelectOnInsert
+-->
+<!ELEMENT ConcurrentService (Description?)>
+<!--
+    Service name.
+
+    #References: /GVCore/GVServices/Services/Service/@id-service
+-->
+<!ATTLIST ConcurrentService service CDATA #REQUIRED>
+<!--
+    Service's client name.
+
+    #References: /GVCore/GVSystems/Systems/System/@id-system
+-->
+<!ATTLIST ConcurrentService system CDATA #IMPLIED>
+
+<!--
+    Max concurrency.
+
+    #NotNull
+-->
+<!ATTLIST ConcurrentService max-concurrency CDATA #REQUIRED>
+
+
+<!--
+    Defines the configuration of the GreenVulcanoESB ACL Policy framework.
+-->
+<!ELEMENT GVPolicy (Description?, Roles, Addresses, ACLGreenVulcano)>
+<!--
+    Element type 'module'.
+-->
+<!ATTLIST GVPolicy type    CDATA   #FIXED  "module">
+<!--
+    Module ID always set to 'POLICY_MANAGER'.
+-->
+<!ATTLIST GVPolicy name    CDATA   #FIXED  "POLICY_MANAGER">
+
+<!--
+    Defines the roles to be used in ACL configuration.
+-->
+<!ELEMENT Roles (Role*)>
+
+<!--
+    Defines a policy role.
+
+    #SelectOnInsert
+    #Label: @name
+    #Icon: GVRole.png
+-->
+<!ELEMENT Role (Description?)>
+<!--
+    Role name.
+
+    #NotNull
+    #Unique: ../Role/@name
+-->
+<!ATTLIST Role name CDATA #REQUIRED>
+
+<!--
+    Defines the address set to be used in ACL configuration.
+-->
+<!ELEMENT Addresses (AddressSet*)>
+
+<!--
+    Defines a policy address set.
+
+    #SelectOnInsert
+    #Label: @name
+    #Icon: GVRole.png
+-->
+<!ELEMENT AddressSet (Description?, Address+)>
+<!--
+    Address set name.
+
+    #NotNull
+    #Unique: ../AddressSet/@name
+-->
+<!ATTLIST AddressSet name CDATA #REQUIRED>
+<!--
+    Defines an enabled address.
+
+    #SelectOnInsert
+    #Label: @address
+-->
+<!ELEMENT Address (Description?)>
+<!--
+    An enabled address.
+
+    #NotNull
+    #Unique: ../Address/@address
+-->
+<!ATTLIST Address address CDATA #REQUIRED>
+
+
+<!--
+    An ACL Manager default implementation.
+
+    #SelectOnInsert
+-->
+<!ELEMENT ACLGreenVulcano (Description?, DefaultRes, ServiceRes*)>
+<!--
+    Unmodifiable.
+    Used by GreenVulcanoESB factory framework.
+-->
+<!ATTLIST ACLGreenVulcano type CDATA #FIXED "acl-manager">
+<!--
+    Unmodifiable.
+    Used by GreenVulcanoESB factory framework.
+-->
+<!ATTLIST ACLGreenVulcano class CDATA #FIXED "it.greenvulcano.gvesb.policy.impl.ACLGreenVulcano">
+
+<!--
+    Defines a resource ACL.
+
+    #SelectOnInsert
+-->
+<!ELEMENT ACL ((RoleRef|AddressSetRef)+)>
+
+<!--
+    Defines an ACL role reference.
+
+    #SelectOnInsert
+    #Label: @name
+    #Icon: GVRole.png
+-->
+<!ELEMENT RoleRef (Description?)>
+<!--
+    Role name.
+
+    #References: /GVCore/GVPolicy/Roles/Role/@name
+    #Unique: ../RoleRef/@name
+-->
+<!ATTLIST RoleRef name CDATA #REQUIRED>
+
+<!--
+    Defines an ACL address set reference.
+
+    #SelectOnInsert
+    #Label: @name
+    #Icon: GVRole.png
+-->
+<!ELEMENT AddressSetRef (Description?)>
+<!--
+    Address set name.
+
+    #References: /GVCore/GVPolicy/Addresses/AddressSet/@name
+    #Unique: ../AddressSetRef/@name
+-->
+<!ATTLIST AddressSetRef name CDATA #REQUIRED>
+
+<!--
+    A default ACL definition.
+
+    #SelectOnInsert
+    #Icon: GVDefaultRes.png
+-->

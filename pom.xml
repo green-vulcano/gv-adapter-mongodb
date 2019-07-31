@@ -9,7 +9,7 @@
     <version>4.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <name>GreenVulcano ESB VCL interface for MongoDB</name>
+    <name>GreenVulcano ESB MongoDB Adapter v2.0</name>
 
    	<properties>
 		<osgi.version>5.0.0</osgi.version>

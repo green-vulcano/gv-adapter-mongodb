@@ -1,0 +1,27 @@
+<!ENTITY % gvsocial SYSTEM "http://www.greenvulcano.com/gvesb/dtds/GVSocial.dtd">
+%gvsocial;
+
+<!ENTITY % extra-j2ee-calls "">
+<!ENTITY % extra-comm-calls "|hl7-call|openspcoop-call|%social-calls;|sap-call|%dicom-calls;|net-send-rec|%push-calls;|mqtt-publish-call|mqtt-subscribe-listener">
+<!ENTITY % extra-file-calls "">
+<!ENTITY % extra-db-calls   "|dh-call">
+<!ENTITY % extra-util-calls "|excel-call|excelreader-call|rules-call|pdfreader-call">
+
+<!ENTITY % extra-enqueue "">
+<!ENTITY % extra-dequeue "">
+
+<!ENTITY % extra-dte-transformers "|XML2HL7Transformation|HL72XMLTransformation">
+
+<!ENTITY % extra-wf-operations ",BpelOperation*">
+<!ENTITY % extra-wf-extensions ",BpelEngineConfiguration?">
+
+<!ENTITY % extra-core "">
+<!ENTITY % extra-adapters ",GVAdapterHttpConfiguration?,GVHL7ListenerManager?,GVRulesConfigManager?,GVSocialAdapterManager?,GVDicomAdapterConfiguration?,GVNetConfiguration?,GVPushNotificationManager?">
+<!ENTITY % extra-support "">
+
+<!ENTITY % extra-input-services "|dh-selector-service">
+<!ENTITY % extra-output-services "">
+
+<!ENTITY % extra-pre-fwd-validators "|HL7ConnectionValidator">
+
+<!ENTITY % extra-remote-manager "|HDFSRemoteManager">
