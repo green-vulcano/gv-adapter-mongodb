@@ -1,88 +1,89 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>it.greenvulcano.gvesb.adapter</groupId>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>it.greenvulcano.gvesb.adapter</groupId>
 
-    <artifactId>gvvcl-mongo</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
-    <packaging>bundle</packaging>
+	<artifactId>gvvcl-mongo</artifactId>
+	<version>4.0.0-SNAPSHOT</version>
+	<packaging>bundle</packaging>
 
-    <name>GreenVulcano ESB VCL interface for MongoDB</name>
+	<name>GreenVulcano ESB VCL interface for MongoDB</name>
 
-   	<properties>
+	<properties>
 		<osgi.version>5.0.0</osgi.version>
-		<gvesb.version>4.0.0-SNAPSHOT</gvesb.version>
+		<gvesb.version>4.1.0-SNAPSHOT</gvesb.version>
 		<maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
 		<maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
-		<cloud.nexus.content>http://mvn.greenvulcano.com/nexus/content</cloud.nexus.content>		
+		<cloud.nexus.content>http://mvn.greenvulcano.com/nexus/content</cloud.nexus.content>
 	</properties>
-	
+
 	<repositories>
-	    <repository>
-            <id>gv</id>
-            <url>http://mvn.greenvulcano.com/nexus/content/groups/public</url>
-            <name>GreenVulcano</name>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-	    <repository>
-	      <id>nexus-cloud</id>
-	      <name>Cloud Nexus instance - PUBLIC</name>
-	      <url>${cloud.nexus.content}/groups/public</url>
-	      <releases>
-	        <enabled>true</enabled>
-	      </releases>
-	      <snapshots>
-	        <enabled>true</enabled>
-	      </snapshots>
-	    </repository>
-    </repositories>
-    
-    <distributionManagement>
-	    <repository>
-	      <id>nexus-cloud</id>
-	      <name>Cloud Nexus instance - RELEASES </name>
-	      <url>${cloud.nexus.content}/repositories/releases</url>
-	    </repository>
-	    <snapshotRepository>
-	      <id>nexus-cloud</id>
-	      <name>Cloud Nexus instance - SNAPSHOTS</name>
-	      <url>${cloud.nexus.content}/repositories/snapshots</url>
-	    </snapshotRepository>
+		<repository>
+			<id>gv</id>
+			<url>http://mvn.greenvulcano.com/nexus/content/groups/public</url>
+			<name>GreenVulcano</name>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>nexus-cloud</id>
+			<name>Cloud Nexus instance - PUBLIC</name>
+			<url>${cloud.nexus.content}/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus-cloud</id>
+			<name>Cloud Nexus instance - RELEASES </name>
+			<url>${cloud.nexus.content}/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-cloud</id>
+			<name>Cloud Nexus instance - SNAPSHOTS</name>
+			<url>${cloud.nexus.content}/repositories/snapshots</url>
+		</snapshotRepository>
 	</distributionManagement>
 
-    <dependencies>
-       
-         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>${osgi.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <version>${osgi.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>it.greenvulcano.gvesb</groupId>
-            <artifactId>gvcore</artifactId>
-            <version>${gvesb.version}</version>
-            <type>bundle</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>it.greenvulcano.gvesb</groupId>
-            <artifactId>gvbase</artifactId>
-            <version>${gvesb.version}</version>
-            <type>bundle</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
+	<dependencies>
+
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgi.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<version>${osgi.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>it.greenvulcano.gvesb</groupId>
+			<artifactId>gvcore</artifactId>
+			<version>${gvesb.version}</version>
+			<type>bundle</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>it.greenvulcano.gvesb</groupId>
+			<artifactId>gvbase</artifactId>
+			<version>${gvesb.version}</version>
+			<type>bundle</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>it.greenvulcano.gvesb</groupId>
 			<artifactId>gvdte</artifactId>
 			<version>${project.version}</version>
@@ -96,7 +97,7 @@
 			<type>bundle</type>
 			<scope>provided</scope>
 		</dependency>
-		   
+
 		<dependency>
 			<groupId>it.greenvulcano.gvesb</groupId>
 			<artifactId>gvpolicy</artifactId>
@@ -104,134 +105,138 @@
 			<type>bundle</type>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>it.greenvulcano.gvesb</groupId>
-            <artifactId>gvvcl-internal</artifactId>
-            <version>${gvesb.version}</version>
-            <type>bundle</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>it.greenvulcano.gvesb</groupId>
-            <artifactId>gvvcl</artifactId>
-            <version>${gvesb.version}</version>
-            <type>bundle</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.7</version>
-        </dependency>       
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20160810</version>
-        </dependency>
-         <dependency>
-		    <groupId>org.ops4j.pax.logging</groupId>
-		    <artifactId>pax-logging-api</artifactId>
-		    <version>1.8.5</version>
+		<dependency>
+			<groupId>it.greenvulcano.gvesb</groupId>
+			<artifactId>gvvcl-internal</artifactId>
+			<version>${gvesb.version}</version>
+			<type>bundle</type>
+			<scope>provided</scope>
 		</dependency>
-        
-        <dependency>
+		<dependency>
+			<groupId>it.greenvulcano.gvesb</groupId>
+			<artifactId>gvvcl</artifactId>
+			<version>${gvesb.version}</version>
+			<type>bundle</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.11.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.10</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20190722</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.logging</groupId>
+			<artifactId>pax-logging-api</artifactId>
+			<version>1.8.5</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>javax.transaction</groupId>
 			<artifactId>javax.transaction-api</artifactId>
 			<version>1.2</version>
 			<scope>test</scope>
 		</dependency>
-		        
-        <dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-		    <groupId>de.flapdoodle.embed</groupId>
-		    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-		    <version>2.0.0</version>
-		    <scope>test</scope>
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<version>2.0.0</version>
+			<scope>test</scope>
 		</dependency>
-		
 
-    </dependencies>
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <id>filter</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>resources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${maven-bundle-plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Version>${project.version}</Bundle-Version>
-                        <Export-Package>it.greenvulcano.gvesb.channel.mongodb.service,
-                            it.greenvulcano.gvesb.channel.mongodb.service.connector</Export-Package>
-                        <Import-Package>*</Import-Package>
-                        <Bundle-Activator>it.greenvulcano.gvesb.channel.mongodb.Activator</Bundle-Activator>
-                    </instructions>
-                </configuration>
-            </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>target/classes/features.xml</file>
-                                    <type>xml</type>
-                                    <classifier>features</classifier>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>filter</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Export-Package>it.greenvulcano.gvesb.channel.mongodb.service,
+							it.greenvulcano.gvesb.channel.mongodb.service.connector</Export-Package>
+						<Import-Package>*</Import-Package>
+						<Bundle-Activator>it.greenvulcano.gvesb.channel.mongodb.Activator</Bundle-Activator>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>target/classes/features.xml</file>
+									<type>xml</type>
+									<classifier>features</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
