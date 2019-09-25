@@ -7,7 +7,7 @@
 	<groupId>it.greenvulcano.gvesb.adapter</groupId>
 
 	<artifactId>gvvcl-mongo</artifactId>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>GreenVulcano ESB VCL interface for MongoDB</name>
@@ -93,14 +93,6 @@
 		<dependency>
 			<groupId>it.greenvulcano.gvesb</groupId>
 			<artifactId>gvstatistics</artifactId>
-			<version>${project.version}</version>
-			<type>bundle</type>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>it.greenvulcano.gvesb</groupId>
-			<artifactId>gvpolicy</artifactId>
 			<version>${project.version}</version>
 			<type>bundle</type>
 			<scope>provided</scope>
