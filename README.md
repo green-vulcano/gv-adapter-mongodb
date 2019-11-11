@@ -6,17 +6,14 @@ This is the implementation of a GreenVulcano VCL adapter for the MongoDB databas
 
 - [GreenVulcano VCL Adapter for MongoDB](#greenvulcano-vcl-adapter-for-mongodb)
 	- [Getting started](#getting-started)
-		- [Prerequisites](#prerequisites)
-		- [Installing the VCL adapter bundle in Apache Karaf](#installing-the-vcl-adapter-bundle-in-apache-karaf)
-	- [Using the VCL adapter in your GreenVulcano project](#using-the-vcl-adapter-in-your-greenvulcano-project)
-		- [Declaring the System-Channel-Operation for the MongoDB database](#declaring-the-system-channel-operation-for-the-mongodb-database)
+		- [Installation](#installation)
 		- [Sample usage](#sample-usage)
 
 <!-- /TOC -->
 
 ## Getting started
 
-### Prerequisites
+### Installation
 
 First, you need to have installed Java Development Kit (JDK) 11 or above.
 
@@ -29,6 +26,8 @@ In order to install the bundle in Apache Karaf to use it for a GreenVulcano appl
 ```shell
 karaf@root()> feature:install gvvcl-mongodb
 ```
+
+### Sample usage
 
 In order to use the features of the MongoDB VCL adapter in your GreenVulcano project, you need to define a proper System-Channel-Operation set of nodes.
 
@@ -69,7 +68,7 @@ Some constraints apply to these XML nodes.
 Use this operation in your project as needed.  
 Whenever you need to deploy a new version of the application on GreenVulcano, you have to make sure the properties of the MongoDB operation nodes are set correctly.
 
-### Sample usage
+
 
 Let's recall the System-Channel-Operation nodes previously defined:
 
