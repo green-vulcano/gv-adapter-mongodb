@@ -34,7 +34,7 @@
 <!ATTLIST update upsert (true|false) "false">
 <!ELEMENT filter (#PCDATA)>
 
-<!ELEMENT delete (EMPTY)>
+<!ELEMENT delete (filter?)>
 
 <!ELEMENT aggregate (stage+)>
 <!ELEMENT stage (#PCDATA)>
