@@ -1,7 +1,6 @@
 package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.buffer.GVBuffer;
 import it.greenvulcano.gvesb.buffer.GVException;
@@ -12,6 +11,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -78,30 +78,15 @@ public class MongoDBOAggregate extends MongoDBO {
 
 			}
 		}
-	
-		MongoCursor<String> resultSet = mongoCollection
-				.aggregate(stagesBson)
-				.map(Document::toJson)
-				.iterator();
-		
-		StringBuilder jsonResult = new StringBuilder("[");
-		
-		int count = 0;
-		while(resultSet.hasNext()) {
-			count++;
-			jsonResult.append(resultSet.next());
 			
-		    if(resultSet.hasNext()) {
-		    	jsonResult.append(",");
-		    } else {
-		    	break;
-		    }
-		}               
+		List<Document> resultSet = new LinkedList<>();
 		
-		jsonResult.append("]");
-
-		gvBuffer.setProperty("REC_READ", Integer.toString(count));
-        gvBuffer.setObject(jsonResult.toString());
+		mongoCollection.aggregate(stagesBson)
+			       .iterator()
+			       .forEachRemaining(resultSet::add);
+				
+		mongoCollection.insertMany(resultSet);	        
+	        gvBuffer.setObject(resultSet.stream().map(d -> d.toJson(JSON_SETTINGS)).collect(Collectors.joining(",","[", "]")));
 		
 	}	
 

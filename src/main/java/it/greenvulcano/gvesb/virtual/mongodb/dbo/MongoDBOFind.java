@@ -1,7 +1,6 @@
 package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.buffer.GVBuffer;
 import it.greenvulcano.gvesb.buffer.GVException;
@@ -10,8 +9,11 @@ import it.greenvulcano.util.metadata.PropertiesHandlerException;
 import org.bson.Document;
 import org.w3c.dom.Node;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class MongoDBOFind extends MongoDBO {
 	
@@ -98,38 +100,23 @@ public class MongoDBOFind extends MongoDBO {
 		Document sortDocument = Document.parse(querySort);
 		Document projectionDocument = Document.parse(queryProjection);
     	
-    	logger.debug("Executing DBO Find: {}"
-				+ "; sort {}"
-				+ "; projection {}"
-				+ "; skip {}"
-				+ "; limit {}",queryCommand, querySort, queryProjection, querySkip, queryLimit);
-		
-		MongoCursor<String> resultSet = mongoCollection
-				.find(commandDocument)
-				.projection(projectionDocument)
-				.sort(sortDocument)
-				.skip(querySkip)
-				.limit(queryLimit)
-				.map(Document::toJson).iterator();
-		
-		StringBuilder jsonResult = new StringBuilder("[");
-		
-		int count = 0;
-		while(resultSet.hasNext()) {
-			count++;
-			jsonResult.append(resultSet.next());
-			
-		    if(resultSet.hasNext()) {
-		    	jsonResult.append(",");
-		    } else {
-		    	break;
-		    }
-		}               
-		
-		jsonResult.append("]");
-
-		gvBuffer.setProperty("REC_READ", Integer.toString(count));
-        gvBuffer.setObject(jsonResult.toString());
+        	logger.debug("Executing DBO Find: {}"
+    				+ "; sort {}"
+    				+ "; projection {}"
+    				+ "; skip {}"
+    				+ "; limit {}",queryCommand, querySort, queryProjection, querySkip, queryLimit);
+        	 
+        	List<Document> resultSet = new LinkedList<>();
+		mongoCollection.find(commandDocument)
+			       .projection(projectionDocument)
+			       .sort(sortDocument)
+			       .skip(querySkip)
+			       .limit(queryLimit)
+			       .iterator()
+			       .forEachRemaining(resultSet::add);
+	
+		gvBuffer.setObject(resultSet.stream().map(d -> d.toJson(JSON_SETTINGS)).collect(Collectors.joining(",","[", "]")));
+		gvBuffer.setProperty("REC_READ", Integer.toString(resultSet.size()));        
 		
 	}	
 
