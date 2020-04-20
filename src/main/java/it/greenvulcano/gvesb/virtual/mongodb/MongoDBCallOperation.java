@@ -14,7 +14,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 
 public class MongoDBCallOperation implements CallOperation {
@@ -24,37 +24,35 @@ public class MongoDBCallOperation implements CallOperation {
     private OperationKey key = null;
 
     private String name;
-    
+
     private String database;
     private String collection;
-       
+
     private MongoClient mongoClient;
-    
+
     private MongoDBO dbo;
-    
+
     @Override
     public void init(Node node) throws InitializationException {
 
         logger.debug("Initializing mongodb-call...");
 
         try {
-        	
-        	name = XMLConfig.get(node, "@name");
-        	
-        	mongoClient = MongoDBChannel.getMongoClient(node)
-        			                    .orElseThrow(()-> new NoSuchElementException("MongoClient instance not found for Operation " + name));
-        	
-        	database = XMLConfig.get(node, "@database");
-        	collection = XMLConfig.get(node, "@collection");
 
-            dbo = MongoDBOFactory.build(node);  
+            name = XMLConfig.get(node, "@name");
+
+            mongoClient = MongoDBChannel.getMongoClient(node).orElseThrow(() -> new NoSuchElementException("MongoClient instance not found for Operation " + name));
+
+            database = XMLConfig.get(node, "@database");
+            collection = XMLConfig.get(node, "@collection");
+
+            dbo = MongoDBOFactory.build(node);
 
             logger.debug("Configured DBOperation " + dbo.getDBOperationName());
 
         } catch (Exception e) {
 
-            throw new InitializationException("GV_INIT_SERVICE_ERROR",
-                    new String[][] { { "message", e.getMessage() } }, e);
+            throw new InitializationException("GV_INIT_SERVICE_ERROR", new String[][] { { "message", e.getMessage() } }, e);
 
         }
 
@@ -64,49 +62,54 @@ public class MongoDBCallOperation implements CallOperation {
     public GVBuffer perform(GVBuffer gvBuffer) throws ConnectionException, CallException, InvalidDataException {
 
         try {
-        	
-        	String actualDatabase = PropertiesHandler.expand(database, gvBuffer);
-        	String actualCollection = PropertiesHandler.expand(collection, gvBuffer);
-        	        	
-        	logger.debug("Preparing MongoDB operation " + dbo.getDBOperationName() + "  on database: " + actualDatabase + " collection: " + actualCollection);
-        	        	
-        	MongoCollection<Document> mongoCollection = mongoClient.getDatabase(actualDatabase)
-    															   .getCollection(actualCollection);
-        	
-        	        	
-    		dbo.execute(mongoCollection, gvBuffer);
+
+            String actualDatabase = PropertiesHandler.expand(database, gvBuffer);
+            String actualCollection = PropertiesHandler.expand(collection, gvBuffer);
+
+            logger.debug("Preparing MongoDB operation " + dbo.getDBOperationName() + "  on database: " + actualDatabase + " collection: " + actualCollection);
+
+            MongoCollection<Document> mongoCollection = mongoClient.getDatabase(actualDatabase).getCollection(actualCollection);
+
+            dbo.execute(mongoCollection, gvBuffer);
 
         } catch (Exception exc) {
             throw new CallException("GV_CALL_SERVICE_ERROR",
-                    new String[][] { { "service", gvBuffer.getService() }, { "system", gvBuffer.getSystem() },
-                            { "tid", gvBuffer.getId().toString() }, { "message", exc.getMessage() } },
-                    exc);
+                                    new String[][] { { "service", gvBuffer.getService() },
+                                                     { "system", gvBuffer.getSystem() },
+                                                     { "tid", gvBuffer.getId().toString() },
+                                                     { "message", exc.getMessage() } },
+                                    exc);
         }
         return gvBuffer;
     }
 
     @Override
     public void cleanUp() {
+
         // do nothing
     }
 
     @Override
     public void destroy() {
+
         // do nothing
     }
 
     @Override
     public void setKey(OperationKey operationKey) {
+
         this.key = operationKey;
     }
 
     @Override
     public OperationKey getKey() {
+
         return key;
     }
 
     @Override
     public String getServiceAlias(GVBuffer gvBuffer) {
+
         return gvBuffer.getService();
     }
 

@@ -3,7 +3,7 @@
  */
 package it.greenvulcano.gvesb.channel.mongodb.service;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 
 /**
  * Useful business interface to provide a {@link MongoClient} instance 

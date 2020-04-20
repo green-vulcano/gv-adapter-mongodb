@@ -7,8 +7,8 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 public class MongoDBConnector implements it.greenvulcano.gvesb.channel.mongodb.service.MongoClientProvider {
 	
@@ -30,9 +30,8 @@ public class MongoDBConnector implements it.greenvulcano.gvesb.channel.mongodb.s
 				if (Objects.isNull(mongoClient)) {
 					
 					LOGGER.debug("MongoClientProvider "+ name + " - creating MongoClient instance using connectionString: "+connectionString);
-				
-					MongoClientURI mongoClientURI = new MongoClientURI(connectionString);
-					mongoClient = new MongoClient(mongoClientURI);
+									
+					mongoClient = MongoClients.create(connectionString);
 					
 					LOGGER.info("MongoClientProvider "+ name + " - MongoClient instance created ");
 				}
