@@ -87,6 +87,7 @@ public class MongoDBOAggregate extends MongoDBO {
 				
 		mongoCollection.insertMany(resultSet);	        
 	        gvBuffer.setObject(resultSet.stream().map(d -> d.toJson(JSON_SETTINGS)).collect(Collectors.joining(",","[", "]")));
+	        gvBuffer.setProperty("REC_READ", Integer.toString(resultSet.size())); 
 		
 	}	
 
