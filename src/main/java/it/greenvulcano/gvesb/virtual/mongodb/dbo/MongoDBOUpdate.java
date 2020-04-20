@@ -3,7 +3,6 @@ package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.bson.BsonValue;
 import org.bson.Document;
 import org.w3c.dom.Node;
 
@@ -66,11 +65,19 @@ public class MongoDBOUpdate extends MongoDBO {
 		gvBuffer.setProperty("REC_UPDATE", Long.toString(updateResult.getModifiedCount()));
 
 		if (upsert) {
-			Optional.ofNullable(updateResult.getUpsertedId())
-			        .map(BsonValue::asObjectId)
+			Optional.ofNullable(updateResult.getUpsertedId())			  
 			        .ifPresent(id->{
 						try {
-							gvBuffer.setProperty("REC_IDS", id.toString());
+						    
+						    if (id.isObjectId()) {
+                                                        gvBuffer.setProperty("REC_IDS", id.asObjectId().getValue().toHexString());
+						    } else if (id.isString()) {
+                                                        gvBuffer.setProperty("REC_IDS", id.asString().getValue());
+						    } else if (id.isNumber()) {
+						        gvBuffer.setProperty("REC_IDS", id.asNumber().toString());
+						    } else {
+						        gvBuffer.setProperty("REC_IDS", id.toString());
+						    }
 						} catch (GVException e) {}
 					});
 			
