@@ -1,14 +1,14 @@
 package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
+
+import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.buffer.GVBuffer;
 import it.greenvulcano.gvesb.buffer.GVException;
+import it.greenvulcano.util.metadata.PropertiesHandler;
 import it.greenvulcano.util.metadata.PropertiesHandlerException;
 import org.bson.Document;
-import org.json.JSONException;
 import org.w3c.dom.Node;
 
 import java.util.Optional;
@@ -16,85 +16,43 @@ import java.util.function.Function;
 
 public class MongoDBODelete extends MongoDBO {
 
-	static final String NAME = "delete";
+    static final String NAME = "delete";
 
-	static final Function<Node, Optional<MongoDBO>> BUILDER = node -> {
+    static final Function<Node, Optional<MongoDBO>> BUILDER = node -> {
 
-		try {
+        try {
+            String filter = XMLConfig.get(node, "./filter/text()");
+            return Optional.of(new MongoDBODelete(filter));
 
-			return Optional.of(new MongoDBODelete());
+        } catch (Exception e) {
 
-		} catch (Exception e) {
+            return Optional.empty();
 
-			return Optional.empty();
+        }
 
-		}
+    };
 
-	};
-	
-	@Override
-	public String getDBOperationName() {		
-		return NAME;
-	}
+    private final String filter;
+    private MongoDBODelete(String filter) {
+        this.filter = filter;
+    }
+    
+    @Override
+    public String getDBOperationName() {
 
-	@Override
-	public void execute(MongoCollection<Document> mongoCollection, GVBuffer gvBuffer) throws PropertiesHandlerException, GVException {
+        return NAME;
+    }
 
-		// prepare the JSON filter to select the documents to delete from the specified collection
-		String deleteFilter = gvBuffer.getObject().toString();
+    @Override
+    public void execute(MongoCollection<Document> mongoCollection, GVBuffer gvBuffer) throws PropertiesHandlerException, GVException {
 
-		logger.debug("Executing DBO Delete: " + deleteFilter);
+        String deleteFilter = filter != null ? PropertiesHandler.expand(filter, gvBuffer) : gvBuffer.getObject().toString();
 
-		// prepare the delete operation result object
-		DeleteResult result = null;
+        logger.debug("Executing DBO Delete: " + deleteFilter);
+        DeleteResult result = mongoCollection.deleteMany(Document.parse(deleteFilter));
 
-		// perform the delete operation and count the deleted rows
-		result = mongoCollection.deleteMany(Document.parse(deleteFilter));
+        gvBuffer.setProperty("REC_DELETED", Long.toString(result.getDeletedCount()));
+             
 
-		// prepare the JSON string containing the amount of deleted documents
-		StringBuilder jsonResultSet = new StringBuilder();
-
-		// prepare a simple bean reporting the amount of deleted
-		MongoDBODeleteReport report = new MongoDBODeleteReport(result.getDeletedCount());
-
-		// prepare the JSON serializer
-		ObjectMapper mapper = new ObjectMapper();
-
-		try {
-
-			jsonResultSet.append(mapper.writeValueAsString(report));
-
-		} catch (JsonProcessingException e) {
-
-			String message = "Unable to produce the JSON representation of the MongoDB delete operation report";
-
-			logger.error(message);
-
-			throw new JSONException(message);
-
-		}
-
-		// set the outbound content of the GVBuffer equal to the JSON representation of the delete operation report
-		gvBuffer.setObject(jsonResultSet.toString());
-
-	}
-
-	public static class MongoDBODeleteReport {
-
-		private Long deletedDocuments;
-
-		public MongoDBODeleteReport(Long deletedDocuments) {
-			this.deletedDocuments = deletedDocuments;
-		}
-
-		public Long getDeletedDocuments() {
-			return deletedDocuments;
-		}
-
-		public void setDeletedDocuments(Long deletedDocuments) {
-			this.deletedDocuments = deletedDocuments;
-		}
-
-	}
-
+    }
 }
