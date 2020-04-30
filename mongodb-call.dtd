@@ -13,8 +13,8 @@
 <!-- the name of the MongoDB collection to use to execute the operation -->
 <!ATTLIST mongodb-call collection CDATA #REQUIRED>
 
-<!-- the JNDI name of the MongoClientProvider instance -->
-<!ATTLIST mongodb-call client-jndi-name CDATA #IMPLIED>
+<!-- the connection URI for connection at runtime -->
+<!ATTLIST mongodb-call uri CDATA #IMPLIED>
 
 <!-- the supported commands -->
 <!ELEMENT find (query|sort*|projection*)>

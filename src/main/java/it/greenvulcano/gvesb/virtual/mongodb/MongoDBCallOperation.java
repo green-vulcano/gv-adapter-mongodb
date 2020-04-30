@@ -7,6 +7,7 @@ import it.greenvulcano.gvesb.virtual.*;
 import it.greenvulcano.gvesb.virtual.mongodb.dbo.MongoDBO;
 import it.greenvulcano.gvesb.virtual.mongodb.dbo.MongoDBOFactory;
 import it.greenvulcano.util.metadata.PropertiesHandler;
+import it.greenvulcano.util.xml.XMLUtils;
 
 import java.util.NoSuchElementException;
 
@@ -25,10 +26,9 @@ public class MongoDBCallOperation implements CallOperation {
 
     private String name;
 
+    private String uri;
     private String database;
     private String collection;
-
-    private MongoClient mongoClient;
 
     private MongoDBO dbo;
 
@@ -40,9 +40,8 @@ public class MongoDBCallOperation implements CallOperation {
         try {
 
             name = XMLConfig.get(node, "@name");
-
-            mongoClient = MongoDBChannel.getMongoClient(node).orElseThrow(() -> new NoSuchElementException("MongoClient instance not found for Operation " + name));
-
+            uri = XMLConfig.get(node, "@uri",  PropertiesHandler.expand(XMLUtils.get_S(node.getParentNode(), "@endpoint")));          
+            
             database = XMLConfig.get(node, "@database");
             collection = XMLConfig.get(node, "@collection");
 
@@ -63,9 +62,11 @@ public class MongoDBCallOperation implements CallOperation {
 
         try {
 
+            String actualUri = PropertiesHandler.expand(uri, gvBuffer);
             String actualDatabase = PropertiesHandler.expand(database, gvBuffer);
             String actualCollection = PropertiesHandler.expand(collection, gvBuffer);
 
+            MongoClient mongoClient = MongoDBChannel.getMongoClient(actualUri).orElseThrow(() -> new NoSuchElementException("MongoClient instance not found for Operation " + name));
             logger.debug("Preparing MongoDB operation " + dbo.getDBOperationName() + "  on database: " + actualDatabase + " collection: " + actualCollection);
 
             MongoCollection<Document> mongoCollection = mongoClient.getDatabase(actualDatabase).getCollection(actualCollection);

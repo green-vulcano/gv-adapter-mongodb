@@ -568,7 +568,25 @@ public class MongoDBCallOperationTest {
         assertEquals(4, result.getJSONObject(0).getInt("readings"));
 
     }
+    
+    @Test
+    public void testLocalConnection() throws GVException {
 
+        GreenVulcano greenVulcano = new GreenVulcano();
+        
+        GVBuffer inputFindGVBuffer = new GVBuffer();
+        inputFindGVBuffer.setService("TEST");
+        inputFindGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
+        inputFindGVBuffer.setProperty("SORT", "{\"timestamp\": -1 }");
+        inputFindGVBuffer.setProperty("MONGO_HOST", "127.0.0.1");
+        inputFindGVBuffer.setProperty("MONGO_PORT", "27017");
+        inputFindGVBuffer.setObject("test input");
+
+        GVBuffer outputFindGVBuffer = greenVulcano.forward(inputFindGVBuffer, "testLocalConnection");
+        assertEquals("2", outputFindGVBuffer.getProperty("REC_READ"));
+        
+    }
+    
     @AfterClass
     public static void destroy() throws Exception {
 

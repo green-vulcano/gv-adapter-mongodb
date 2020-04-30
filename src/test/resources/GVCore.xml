@@ -151,6 +151,25 @@
                                    point-x="391" point-y="150" type="flow-node"/>
                     </Flow>
                 </Operation>
+                
+                <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
+                           name="testLocalConnection" operation-activation="on"
+                           type="operation">
+
+                    <Flow first-node="invokeCallOperation">
+
+                        <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                         id="invokeCallOperation" id-channel="TestChannelLocal"
+                                         id-system="TestSystem" input="inGVBuffer"
+                                         next-node-id="done" op-type="call"  dump-in-out="true"
+                                         operation-name="testMongoDBCallFindLocalURI" output="outGVBuffer"
+                                         type="flow-node"/>
+
+                        <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                                   id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
+                                   point-x="391" point-y="150" type="flow-node"/>
+                    </Flow>
+                </Operation>
             </Service>
         </Services>
     </GVServices>
@@ -192,7 +211,16 @@
                         <delete></delete>
                     </mongodb-call>
                 </Channel>
-
+                
+                <Channel id-channel="TestChannelLocal" type="MongoDBAdapter" enabled="true">
+                    <mongodb-call name="testMongoDBCallFindLocalURI" uri="mongodb://@{{MONGO_HOST}}:@{{MONGO_PORT}}" database="gviot" collection="measures_1" type="call">
+                          <find offset="@{{offset::0}}" limit="@{{limit::128}}">
+                            <query>@{{FILTER}}</query>
+                            <sort>@{{SORT}}</sort>
+                            <projection>@{{PROJECTION::{}}}</projection>
+                          </find>
+                    </mongodb-call>
+                 </Channel>
             </System>
 
 

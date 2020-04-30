@@ -7,6 +7,8 @@ import it.greenvulcano.gvesb.buffer.GVBuffer;
 import it.greenvulcano.gvesb.channel.mongodb.MongoDBChannel;
 import it.greenvulcano.gvesb.virtual.*;
 import it.greenvulcano.util.metadata.PropertiesHandler;
+import it.greenvulcano.util.xml.XMLUtils;
+
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -19,11 +21,9 @@ public class MongoDBListCollectionsCallOperation implements CallOperation {
     private OperationKey key = null;
 
     private String name;
-    
+    private String uri;
     private String database;
 
-    
-    private MongoClient mongoClient;
     
     @Override
     public void init(Node node) throws InitializationException {
@@ -32,10 +32,8 @@ public class MongoDBListCollectionsCallOperation implements CallOperation {
 
         try {
         	
-        	name = XMLConfig.get(node, "@name");
-        	
-        	mongoClient = MongoDBChannel.getMongoClient(node)
-        			                    .orElseThrow(()-> new NoSuchElementException("MongoClient instance not foud for Operation " + name));
+        	name = XMLConfig.get(node, "@name");        	
+        	uri = XMLConfig.get(node, "@uri",  PropertiesHandler.expand(XMLUtils.get_S(node.getParentNode(), "@endpoint")));
         	
         	database = XMLConfig.get(node, "@database");
 
@@ -58,6 +56,8 @@ public class MongoDBListCollectionsCallOperation implements CallOperation {
         	String actualDatabase = PropertiesHandler.expand(database, gvBuffer);
 
         	logger.debug("Getting the list of collections in the MongoDB database...");
+        	String actualUri = PropertiesHandler.expand(uri, gvBuffer);
+        	MongoClient mongoClient = MongoDBChannel.getMongoClient(actualUri).orElseThrow(() -> new NoSuchElementException("MongoClient instance not found for Operation " + name));
         	
         	MongoCursor<String> resultset = mongoClient.getDatabase(actualDatabase)
     				.listCollectionNames()

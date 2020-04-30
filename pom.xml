@@ -135,6 +135,12 @@
 			<version>1.8.5</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.7</version>
+		    <scope>provided</scope>  
+		</dependency>
 
 		<dependency>
 			<groupId>javax.transaction</groupId>
