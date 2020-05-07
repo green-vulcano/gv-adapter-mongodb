@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -87,6 +88,27 @@ public class MongoDBCallOperationTest {
     public void cleanDb() {
 
         mongoClient.getDatabase("gviot").getCollection("measures_1").deleteMany(Document.parse("{}"));
+    }
+    
+    @Test
+    public void testCreateIndex() throws GVException {
+        
+        assertFalse( mongoClient.getDatabase("gviot").listCollectionNames().into(new HashSet<>()).contains("test_index") );
+        
+        GVBuffer inputGVBuffer = new GVBuffer();
+        inputGVBuffer.setService("TEST");
+        
+        GreenVulcano greenVulcano = new GreenVulcano();
+        GVBuffer result = greenVulcano.forward(inputGVBuffer, "testCreateIndex");
+        
+        JSONArray createIndexes = new JSONArray(result.getObject().toString());
+        
+        assertEquals(2, createIndexes.length());
+        
+        List<String> indexes = new LinkedList<>();
+        mongoClient.getDatabase("gviot").getCollection("test_index").listIndexes().map(d-> d.toJson()).into(indexes);
+        assertEquals(3, indexes.size());
+        
     }
 
     @Test

@@ -30,7 +30,7 @@ public class MongoDBOFactory {
 		
 		dboSuppliers.put(MongoDBOAggregate.NAME, MongoDBOAggregate.BUILDER);
 
-		// TODO repeat for each DBO operation
+		dboSuppliers.put(MongoDBOCreateIndex.NAME, MongoDBOCreateIndex.BUILDER);
 
 	}
 
