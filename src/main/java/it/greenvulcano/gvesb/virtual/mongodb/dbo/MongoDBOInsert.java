@@ -6,6 +6,7 @@ import it.greenvulcano.gvesb.buffer.GVException;
 import it.greenvulcano.util.metadata.PropertiesHandlerException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.json.JSONArray;
 import org.w3c.dom.Node;
 
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MongoDBOInsert extends MongoDBO {
 
@@ -43,17 +45,31 @@ public class MongoDBOInsert extends MongoDBO {
     @Override
     public void execute(MongoCollection<Document> mongoCollection, GVBuffer gvBuffer) throws PropertiesHandlerException, GVException {
 
-        String bufferObj = Optional.ofNullable(gvBuffer.getObject()).map(Object::toString).orElseThrow();
+        String bufferObj = Optional.ofNullable(gvBuffer.getObject()).map(Object::toString).map(String::trim).orElseThrow();
 
         List<Document> dbEntries = new LinkedList<>();
-
-        Matcher jsonMatcher = Pattern.compile("\\{[^}]*\\}").matcher(bufferObj);
-        while (jsonMatcher.find()) {
-            Document entry = Document.parse(jsonMatcher.group());
+        
+        if (bufferObj.startsWith("{")) { //is a json object
+            
+            Document entry = Document.parse(bufferObj);
             entry.putIfAbsent("_id", ObjectId.get());
 
             dbEntries.add(entry);
-        }
+            
+        } else if (bufferObj.startsWith("[")) { //is a json object
+            
+            JSONArray items = new JSONArray(bufferObj);
+            
+            for (int i = 0; i<items.length(); i++) {
+                
+                Document entry = Document.parse(items.getJSONObject(i).toString());
+                entry.putIfAbsent("_id", ObjectId.get());
+
+                dbEntries.add(entry);
+                
+            }
+            
+        }               
 
         mongoCollection.insertMany(dbEntries);
         
