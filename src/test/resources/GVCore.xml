@@ -189,6 +189,25 @@
                                    point-x="391" point-y="150" type="flow-node"/>
                     </Flow>
                 </Operation>
+                
+                <Operation class="it.greenvulcano.gvesb.core.flow.GVFlowWF" loggerLevel="ALL"
+                           name="testCreateUser" operation-activation="on"
+                           type="operation">
+
+                    <Flow first-node="invokeCallOperation">
+
+                        <GVOperationNode class="it.greenvulcano.gvesb.core.flow.GVOperationNode"
+                                         id="invokeCallOperation" id-channel="TestChannel"
+                                         id-system="TestSystem" input="inGVBuffer"
+                                         next-node-id="done" op-type="call"  dump-in-out="true"
+                                         operation-name="testCreateUser" output="outGVBuffer"
+                                         type="flow-node"/>
+
+                        <GVEndNode class="it.greenvulcano.gvesb.core.flow.GVEndNode"
+                                   id="done" op-type="end" output="outGVBuffer" dump-in-out="true"
+                                   point-x="391" point-y="150" type="flow-node"/>
+                    </Flow>
+                </Operation>
             </Service>
         </Services>
     </GVServices>
@@ -236,6 +255,10 @@
                             <keys>{"fullname" : "text"}</keys>
                         </createIndex>
                     </mongodb-call>
+                    
+                    <mongodb-create-user-call name="testCreateUser" database="gviot" username="gviot" password="gviot" type="call">
+                         [{"role":"readWrite", "db" : "gviot"}]
+                    </mongodb-create-user-call>
                 </Channel>
                 
                 <Channel id-channel="TestChannelLocal" type="MongoDBAdapter" enabled="true">

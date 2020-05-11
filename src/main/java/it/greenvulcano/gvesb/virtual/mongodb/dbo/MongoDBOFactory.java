@@ -31,6 +31,8 @@ public class MongoDBOFactory {
 		dboSuppliers.put(MongoDBOAggregate.NAME, MongoDBOAggregate.BUILDER);
 
 		dboSuppliers.put(MongoDBOCreateIndex.NAME, MongoDBOCreateIndex.BUILDER);
+		
+		dboSuppliers.put(MongoDBOFindOneAndUpdate.NAME, MongoDBOFindOneAndUpdate.BUILDER);
 
 	}
 

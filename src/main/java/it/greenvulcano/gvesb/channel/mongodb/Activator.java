@@ -25,6 +25,7 @@ import it.greenvulcano.configuration.XMLConfig;
 import it.greenvulcano.gvesb.core.config.GreenVulcanoConfig;
 import it.greenvulcano.gvesb.virtual.OperationFactory;
 import it.greenvulcano.gvesb.virtual.mongodb.MongoDBCallOperation;
+import it.greenvulcano.gvesb.virtual.mongodb.MongoDBCreateUserCallOperation;
 import it.greenvulcano.gvesb.virtual.mongodb.MongoDBListCollectionsCallOperation;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -61,7 +62,8 @@ public class Activator implements BundleActivator {
 		// register the operations associated to the MongoDB connector
 
 		MongoDBChannel.setup();
-				
+		
+		OperationFactory.registerSupplier("mongodb-create-user-call", MongoDBCreateUserCallOperation::new);
 		OperationFactory.registerSupplier("mongodb-list-collections-call", MongoDBListCollectionsCallOperation::new);
 		OperationFactory.registerSupplier("mongodb-call", MongoDBCallOperation::new);
 
@@ -81,7 +83,7 @@ public class Activator implements BundleActivator {
 		XMLConfig.removeConfigurationListener(configurationListener);
 
 		// unregister the operations associated to the MongoDB connector
-
+		OperationFactory.unregisterSupplier("mongodb-create-user-call");
 		OperationFactory.unregisterSupplier("mongodb-list-collections-call");
 		OperationFactory.unregisterSupplier("mongodb-call");
 

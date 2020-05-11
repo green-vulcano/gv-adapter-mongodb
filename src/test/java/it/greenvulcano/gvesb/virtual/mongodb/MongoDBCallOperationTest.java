@@ -62,6 +62,7 @@ public class MongoDBCallOperationTest {
 
         XMLConfig.setBaseConfigPath(MongoDBCallOperationTest.class.getClassLoader().getResource(".").getPath());
         OperationFactory.registerSupplier("mongodb-call", MongoDBCallOperation::new);
+        OperationFactory.registerSupplier("mongodb-create-user-call", MongoDBCreateUserCallOperation::new);
 
         MongoDBChannel.setup();
 
@@ -109,6 +110,18 @@ public class MongoDBCallOperationTest {
         mongoClient.getDatabase("gviot").getCollection("test_index").listIndexes().map(d-> d.toJson()).into(indexes);
         assertEquals(3, indexes.size());
         
+    }
+    
+    @Test
+    public void testCreateUser() throws GVException {
+                        
+        GVBuffer inputGVBuffer = new GVBuffer();
+        inputGVBuffer.setService("TEST");
+        
+        GreenVulcano greenVulcano = new GreenVulcano();
+        GVBuffer result = greenVulcano.forward(inputGVBuffer, "testCreateUser");
+        
+        assertEquals("{\"ok\": 1.0}", result.getObject().toString());
     }
 
     @Test
@@ -412,7 +425,7 @@ public class MongoDBCallOperationTest {
     @Test
     public void testUpdate() throws GVException {
 
-        // Update all BATTERY records adding openssl s_client -connect apiaruba.getradice.com:80
+        // Update all BATTERY records 
         GVBuffer inputGVBuffer = new GVBuffer();
         inputGVBuffer.setService("TEST");
         inputGVBuffer.setProperty("FILTER", "{\"sensor.physicalId\": { $eq:\"BATTERY\" } }");
