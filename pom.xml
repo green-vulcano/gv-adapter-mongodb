@@ -17,43 +17,36 @@
 		<gvesb.version>4.1.0</gvesb.version>
 		<maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
 		<maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
+		
 		<cloud.nexus.content>http://mvn.greenvulcano.com/nexus/content</cloud.nexus.content>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>gv</id>
-			<url>http://mvn.greenvulcano.com/nexus/content/groups/public</url>
-			<name>GreenVulcano</name>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>nexus-cloud</id>
-			<name>Cloud Nexus instance - PUBLIC</name>
-			<url>${cloud.nexus.content}/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
+            <id>nexus-cloud</id>
+            <name>Cloud Nexus instance - PUBLIC</name>
+            <url>${cloud.nexus.content}/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
 	</repositories>
 
 	<distributionManagement>
-		<repository>
-			<id>nexus-cloud</id>
-			<name>Cloud Nexus instance - RELEASES </name>
-			<url>${cloud.nexus.content}/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus-cloud</id>
-			<name>Cloud Nexus instance - SNAPSHOTS</name>
-			<url>${cloud.nexus.content}/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
+        <repository>
+            <id>nexus-cloud</id>
+            <name>Cloud Nexus instance - RELEASES </name>
+            <url>${cloud.nexus.content}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-cloud</id>
+            <name>Cloud Nexus instance - SNAPSHOTS</name>
+            <url>${cloud.nexus.content}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 	<dependencies>
 
