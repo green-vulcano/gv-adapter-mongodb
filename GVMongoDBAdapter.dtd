@@ -37,9 +37,9 @@
 -->
 <!ATTLIST mongodb-call database CDATA #REQUIRED>
 <!-- 
-    The JNDI name of the MongoClientProvider instance
+    Optional connection string to override channel endpoint  
 -->
-<!ATTLIST mongodb-call client-jndi-name CDATA #IMPLIED>
+<!ATTLIST mongodb-call uri CDATA #IMPLIED>
 <!--
     Find operation for MongoDB. Specify at least the search query in the specified configuration child.
     
@@ -119,7 +119,7 @@
 <!--
         Enable/Disable upsert
 -->
-<!ATTLIST update upsert (true|false) "false">
+<!ATTLIST findOneAndModify upsert (true|false) "false">
 <!--
        If true the original document before the modify operation will be returned,
        otherwise the updated document will be returned (default false)
