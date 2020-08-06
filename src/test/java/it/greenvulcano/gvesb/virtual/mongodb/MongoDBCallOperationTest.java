@@ -343,7 +343,8 @@ public class MongoDBCallOperationTest {
 
         GVBuffer inputCreateGVBuffer = new GVBuffer();
         inputCreateGVBuffer.setService("TEST");
-        inputCreateGVBuffer.setObject("{ \"fakePhysicalId\": \"BATTERY\" }");
+        inputCreateGVBuffer.setObject("{ \"fakePhysicalId\": \"BATTERY\", \"timestamp\": " +System.currentTimeMillis()
+                + " }");
 
         GreenVulcano greenVulcano = new GreenVulcano();
         GVBuffer outputCreateGVBuffer = greenVulcano.forward(inputCreateGVBuffer, "testCreate");
