@@ -58,6 +58,9 @@ public class MongoDBOFindOneAndUpdate extends MongoDBO {
 		
 		String actualFilter = PropertiesHandler.expand(filter, gvBuffer);
 		String actualStatement = PropertiesHandler.expand(statement, gvBuffer);
+		
+		logger.debug("Executing DBO FindOneAndUpdate filter: {}", actualFilter);
+                logger.debug("Executing DBO FindOneAndUpdate statement: {}", actualStatement);
 				
 		FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
 		options.upsert(upsert);		

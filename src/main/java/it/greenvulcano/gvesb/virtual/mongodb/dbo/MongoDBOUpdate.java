@@ -56,6 +56,9 @@ public class MongoDBOUpdate extends MongoDBO {
 		String actualFilter = PropertiesHandler.expand(filter, gvBuffer);
 		String actualStatement = PropertiesHandler.expand(statement, gvBuffer);
 		
+		logger.debug("Executing DBO Update filter: {}", actualFilter);
+		logger.debug("Executing DBO Update statement: {}", actualStatement);
+		
 		UpdateOptions updateOptions = new UpdateOptions();
 		updateOptions.upsert(upsert);
 		

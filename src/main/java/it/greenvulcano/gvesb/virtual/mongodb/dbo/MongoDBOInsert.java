@@ -44,6 +44,8 @@ public class MongoDBOInsert extends MongoDBO {
 
         String bufferObj = Optional.ofNullable(gvBuffer.getObject()).map(Object::toString).map(String::trim).orElseThrow();
 
+        logger.debug("Executing DBO Insert: {}", bufferObj);
+        
         List<Document> dbEntries = new LinkedList<>();
         
         if (bufferObj.startsWith("{")) { //is a json object
