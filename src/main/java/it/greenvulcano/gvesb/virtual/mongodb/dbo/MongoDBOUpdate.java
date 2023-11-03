@@ -1,10 +1,15 @@
 package it.greenvulcano.gvesb.virtual.mongodb.dbo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.bson.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
@@ -25,8 +30,14 @@ public class MongoDBOUpdate extends MongoDBO {
 		
 			String filter = XMLConfig.get(node, "./filter/text()", "{}");
 			String statement = XMLConfig.get(node, "./statement/text()");
+
+			NodeList arrayFiltersConfig =XMLConfig.getNodeList(node, "./arrayFilter");
+			List<String> arrayFilters = IntStream.range(0, arrayFiltersConfig.getLength())
+			         .mapToObj(arrayFiltersConfig::item)
+			         .map(Node::getTextContent)
+			         .collect(Collectors.toList());
 			boolean upsert = XMLConfig.getBoolean(node, "@upsert", false);
-			return Optional.of(new MongoDBOUpdate(filter, statement,  upsert));
+			return Optional.of(new MongoDBOUpdate(filter, statement, arrayFilters, upsert));
 			
 		} catch (Exception e) {
 			
@@ -37,11 +48,13 @@ public class MongoDBOUpdate extends MongoDBO {
 	
 	private final String filter;
 	private final String statement;	
+	private final List<String> arrayFilters;
 	private final boolean upsert;
 
-	public MongoDBOUpdate(String filter, String statement, boolean upsert) {
+	public MongoDBOUpdate(String filter, String statement, List<String> arrayFilters, boolean upsert) {
 		this.filter = filter;
 		this.statement = statement;
+		this.arrayFilters = arrayFilters;
 		this.upsert = upsert;
 	}
 
@@ -56,10 +69,26 @@ public class MongoDBOUpdate extends MongoDBO {
 		String actualFilter = PropertiesHandler.expand(filter, gvBuffer);
 		String actualStatement = PropertiesHandler.expand(statement, gvBuffer);
 		
+		List<Document> arrayFiltersBson = new ArrayList<>();
+		for (String f: arrayFilters) {
+			try {
+				String fs = PropertiesHandler.expand(f, gvBuffer);				
+				logger.debug("Adding arrayFilter to update: {}", fs);				
+				arrayFiltersBson.add(Document.parse(fs));
+			} catch (Exception e) {
+				logger.error("Error adding arrayFilter to update", e);
+				throw new GVException("Error adding arrayFilter to update" + e.getClass().getName());
+			}
+		}
+
+		
 		logger.debug("Executing DBO Update filter: {}", actualFilter);
 		logger.debug("Executing DBO Update statement: {}", actualStatement);
 		
 		UpdateOptions updateOptions = new UpdateOptions();
+		if (!arrayFiltersBson.isEmpty()) {
+			updateOptions.arrayFilters(arrayFiltersBson);
+		}
 		updateOptions.upsert(upsert);
 		
 		UpdateResult updateResult = mongoCollection.updateMany(Document.parse(actualFilter), Document.parse(actualStatement), updateOptions);
